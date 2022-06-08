@@ -1,6 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
-const fs = require('fs')
+const lineReader = require('line-reader');
 
 try {
   const pathLogFile = core.getInput('path-log-file');
@@ -8,9 +8,12 @@ try {
   const githubDatabaseRepo = core.getInput('github-database-repo');
 
   console.log(`Go read file at : ${pathLogFile}!`);
-  var data = fs.readFileSync(pathLogFile)
-  console.log(data)
 
+  lineReader.eachLine(pathLogFile, function(line, last) {
+    if(last) {
+      console.log('Last line printed.');
+    }
+  });
 } catch (error) {
   core.setFailed(error.message);
 }
