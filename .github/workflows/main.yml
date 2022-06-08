@@ -9,7 +9,7 @@ jobs:
         run: echo 'toto' > ${RUNNER_TEMP}/logs.txt
       - name: Run test
         id: run
-        uses: Superbasil3/build-failure-analyser-action@v0.2
+        uses: Superbasil3/build-failure-analyser-action@v0.3
         with:
           path-log-file: '${RUNNER_TEMP}/logs.txt'
           github-token: 'TOTOT'
