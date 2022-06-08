@@ -11,7 +11,7 @@ jobs:
           echo "${RUNNER_TEMP}/logs.txt"
           cat "${RUNNER_TEMP}/logs.txt"
       - id: generate_path_logs
-        run: echo "::set-output name=path_logs::"${RUNNER_TEMP}/logs.txt"
+        run: echo "::set-output name=path_logs::$(echo ${RUNNER_TEMP,,}'/logs.txt')"
       - name: Run test
         id: run
         uses: Superbasil3/build-failure-analyser-action@v0.3
