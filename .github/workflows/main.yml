@@ -1,0 +1,16 @@
+on: [push]
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    name: Try build-failure-analyser-action
+    steps:
+      - name: Create log file
+        run: echo 'toto' > ${RUNNER_TEMP}/logs.txt
+      - name: Run test
+        id: run
+        uses: Superbasil3/build-failure-analyser-action@v0.1
+        with:
+          path-log-file: '${RUNNER_TEMP}/logs.txt'
+          github-token: 'TOTOT'
+          github-database-repo: 'TATA'
