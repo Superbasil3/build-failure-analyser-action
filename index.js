@@ -15,6 +15,15 @@ try {
       console.log('Last line printed.');
     }
   });
+  regex.getRegexList()
 } catch (error) {
   core.setFailed(error.message);
 }
+
+
+const regex = {
+  getRegexList() {
+    let jsonData = require('../database.json');
+    console.log(jsonData);
+  }
+};
