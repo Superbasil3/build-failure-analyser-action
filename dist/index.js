@@ -9005,6 +9005,14 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
+/***/ 6088:
+/***/ ((module) => {
+
+module.exports = eval("require")("../database.json");
+
+
+/***/ }),
+
 /***/ 5347:
 /***/ ((module) => {
 
@@ -9199,10 +9207,18 @@ try {
       console.log('Last line printed.');
     }
   });
+  regex.getRegexList()
 } catch (error) {
   core.setFailed(error.message);
 }
 
+
+const regex = {
+  getRegexList() {
+    let jsonData = __nccwpck_require__(6088);
+    console.log(jsonData);
+  }
+};
 })();
 
 module.exports = __webpack_exports__;
