@@ -9194,6 +9194,7 @@ try {
   console.log(`Go read file at : ${pathLogFile}!`);
 
   lineReader.eachLine(pathLogFile, function(line, last) {
+    console.log('Line ' + line);
     if(last) {
       console.log('Last line printed.');
     }
