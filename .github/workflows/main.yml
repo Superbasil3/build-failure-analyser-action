@@ -14,7 +14,7 @@ jobs:
         run: echo "::set-output name=path_logs::$(echo ${RUNNER_TEMP,,}'/logs.txt')"
       - name: Run test
         id: run
-        uses: Superbasil3/build-failure-analyser-action@v0.4
+        uses: Superbasil3/build-failure-analyser-action@v0.3.1
         with:
           path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
           github-token: 'TOTOT'
