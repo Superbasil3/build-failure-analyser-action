@@ -9194,6 +9194,13 @@ const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
 const lineReader = __nccwpck_require__(4821);
 
+const regex = {
+  getRegexList() {
+    let jsonData = __nccwpck_require__(6088);
+    console.log(jsonData);
+  }
+};
+
 try {
   const pathLogFile = core.getInput('path-log-file');
   const githubToken = core.getInput('github-token');
@@ -9213,12 +9220,7 @@ try {
 }
 
 
-const regex = {
-  getRegexList() {
-    let jsonData = __nccwpck_require__(6088);
-    console.log(jsonData);
-  }
-};
+
 })();
 
 module.exports = __webpack_exports__;
