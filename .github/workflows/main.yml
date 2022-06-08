@@ -10,10 +10,12 @@ jobs:
           echo 'toto' > ${RUNNER_TEMP}/logs.txt
           echo "${RUNNER_TEMP}/logs.txt"
           cat "${RUNNER_TEMP}/logs.txt"
+      - id: generate_path_logs
+        run: echo "::set-output name=path_logs::"${RUNNER_TEMP}/logs.txt"
       - name: Run test
         id: run
         uses: Superbasil3/build-failure-analyser-action@v0.3
         with:
-          path-log-file: "${RUNNER_TEMP}/logs.txt"
+          path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
           github-token: 'TOTOT'
           github-database-repo: 'TATA'
