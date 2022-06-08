@@ -1,0 +1,24 @@
+{
+  "causes": [
+    {
+      "id": "ID_1",
+      "name": "NAME_1",
+      "description": "DESCRIPTION_1",
+      "comment": "",
+      "indications": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ]
+    },
+    {
+      "id": "ID_2",
+      "name": "NAME_2",
+      "description": "DESCRIPTION_2",
+      "comment": "",
+        "indications": [
+            "PATTERN_2_a",
+            "PATTERN_2_b"
+        ]
+    }
+  ]
+}
