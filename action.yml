@@ -1,0 +1,19 @@
+name: 'Build Failure Analyser Action'
+description: 'Play regex against log file in order to see if error are matched'
+inputs:
+  path-log-file:
+    description: "Where the log file is located"
+    required: true
+  github-token:
+    description: "Token with access to update message, and read the database"
+    required: true
+  github-database-repo:
+    description: "Url of the repo with the json config file"
+    required: true
+
+outputs:
+  time:
+    description: 'The time we greeted you'
+runs:
+  using: 'node16'
+  main: 'index.js'
