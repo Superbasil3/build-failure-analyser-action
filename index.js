@@ -2,6 +2,13 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 const lineReader = require('line-reader');
 
+const regex = {
+  getRegexList() {
+    let jsonData = require('../database.json');
+    console.log(jsonData);
+  }
+};
+
 try {
   const pathLogFile = core.getInput('path-log-file');
   const githubToken = core.getInput('github-token');
@@ -21,9 +28,3 @@ try {
 }
 
 
-const regex = {
-  getRegexList() {
-    let jsonData = require('../database.json');
-    console.log(jsonData);
-  }
-};
