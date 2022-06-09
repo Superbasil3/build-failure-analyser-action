@@ -6,6 +6,10 @@ const regex = {
   getRegexList() {
     let jsonData = require('../database.json');
     console.log(jsonData);
+    for(const val of jsonData.causes) {
+      console.log("element id : " + val.id)
+      console.log("element id : " + val.name)
+    }
   }
 };
 
