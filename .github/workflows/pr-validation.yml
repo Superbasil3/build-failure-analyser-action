@@ -10,17 +10,27 @@ jobs:
     runs-on: ubuntu-latest
     name: Try build-failure-analyser-action
     steps:
-      - name: Create log file
+      - id: generate_log_file
+        name: Create log file
         run: |
           echo 'This is a test' > ${RUNNER_TEMP}/logs.txt
-          echo "${RUNNER_TEMP}/logs.txt"
-          cat "${RUNNER_TEMP}/logs.txt"
-      - id: generate_path_logs
-        run: echo "::set-output name=path_logs::$(echo ${RUNNER_TEMP,,}'/logs.txt')"
-      - name: Run test
-        id: run
+      - id: generate_variable
+        if: always()
+        name : Generate Varirable
+        run: |
+          echo "::set-output name=path_logs::$(echo ${RUNNER_TEMP,,}'/logs.txt')"
+          echo "::set-output name=path_json_database::$(echo ${RUNNER_TEMP,,}'/remote-database.json')"
+      - id: download_json_file
+        if: always()
+        name: Download json database
+        run: curl https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/alpha/database.json -o ${{ steps.generate_variable.outputs.path_json_database }}
+      - id: run_build_failure_analyser
+        if: always()
+        name: Run job failure analyser
         uses: Superbasil3/build-failure-analyser-action@v0.3.3
         with:
-          path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
-          github-token: 'TOTOT'
-          github-database-repo: 'TATA'
+          path-log-file: ${{ steps.generate_variable.outputs.path_logs }}
+          path-log-database-json: ${{ steps.generate_variable.outputs.path_json_database }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          step-outcome: ${{ steps.generate_log_file.outcome }}
+

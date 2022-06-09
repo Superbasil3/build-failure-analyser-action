@@ -1,5 +1,4 @@
 - Get logs from current run -> Github cli during run ?
-- Create JSON format of error
 - Format message
 - Action that read logs, run regex and write message
 - Write action to validate json entry
@@ -11,10 +10,3 @@
 - relase v0
 - add licences
 - add sponsor
-
-
-
-https://github.expedia.biz/Traveldoo/site-resources-api/suites/4142484/logs
-https://github.expedia.biz/Traveldoo/site-resources-api/commit/bddfe7833cc704606916e7b2367443c597df53da/checks/4265231/logs
-
-
