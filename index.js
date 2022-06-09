@@ -7,7 +7,7 @@ const regex = {
     const regexHash = {}
     let jsonData = require('../database.json');
     console.log(jsonData);
-    for(const [id, cause] of jsonData.causes) {
+    for(const [id, cause] of  Object.entries(jsonData.causes)) {
       for(const indication of cause.indications){
         console.log("indication : " + indication)
         regexList[indication] = id
