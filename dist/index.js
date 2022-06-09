@@ -9202,7 +9202,7 @@ const regex = {
     for(const [id, cause] of  Object.entries(jsonData.causes)) {
       for(const indication of cause.indications){
         console.log("indication : " + indication)
-        regexList[indication] = id
+        regexHash[indication] = id
       }
     }
     console.log(regexHash)
