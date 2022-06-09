@@ -9196,12 +9196,16 @@ const lineReader = __nccwpck_require__(4821);
 
 const regex = {
   getRegexList() {
+    const regexHash = {}
     let jsonData = __nccwpck_require__(6088);
     console.log(jsonData);
-    for(const val of jsonData.causes) {
-      console.log("element id : " + val.id)
-      console.log("element id : " + val.name)
+    for(const [id, cause] of jsonData.causes) {
+      for(const indication of cause.indications){
+        console.log("indication : " + indication)
+        regexList[indication] = id
+      }
     }
+    console.log(regexHash)
   }
 };
 

@@ -4,12 +4,16 @@ const lineReader = require('line-reader');
 
 const regex = {
   getRegexList() {
+    const regexHash = {}
     let jsonData = require('../database.json');
     console.log(jsonData);
-    for(const val of jsonData.causes) {
-      console.log("element id : " + val.id)
-      console.log("element id : " + val.name)
+    for(const [id, cause] of jsonData.causes) {
+      for(const indication of cause.indications){
+        console.log("indication : " + indication)
+        regexList[indication] = id
+      }
     }
+    console.log(regexHash)
   }
 };
 

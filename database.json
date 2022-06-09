@@ -1,7 +1,6 @@
 {
-  "causes": [
-    {
-      "id": "ID_1",
+  "causes": {
+    "ID_1": {
       "name": "NAME_1",
       "description": "DESCRIPTION_1",
       "comment": "",
@@ -10,15 +9,13 @@
         "PATTERN_1_b"
       ]
     },
-    {
-      "id": "ID_2",
+    "ID_2": {
       "name": "NAME_2",
       "description": "DESCRIPTION_2",
       "comment": "",
-        "indications": [
-            "PATTERN_2_a",
-            "PATTERN_2_b"
-        ]
+      "indications": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ]
     }
-  ]
-}
+  }
