@@ -9198,6 +9198,10 @@ const regex = {
   getRegexList() {
     let jsonData = __nccwpck_require__(6088);
     console.log(jsonData);
+    for(const val of jsonData.causes) {
+      console.log("element id : " + val.id)
+      console.log("element id : " + val.name)
+    }
   }
 };
 
