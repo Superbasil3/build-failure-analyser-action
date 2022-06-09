@@ -2878,6 +2878,44 @@ exports.paginatingEndpoints = paginatingEndpoints;
 
 /***/ }),
 
+/***/ 6173:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+
+const VERSION = "1.0.4";
+
+/**
+ * @param octokit Octokit instance
+ * @param options Options passed to Octokit constructor
+ */
+
+function requestLog(octokit) {
+  octokit.hook.wrap("request", (request, options) => {
+    octokit.log.debug("request", options);
+    const start = Date.now();
+    const requestOptions = octokit.request.endpoint.parse(options);
+    const path = requestOptions.url.replace(options.baseUrl, "");
+    return request(options).then(response => {
+      octokit.log.info(`${requestOptions.method} ${path} - ${response.status} in ${Date.now() - start}ms`);
+      return response;
+    }).catch(error => {
+      octokit.log.info(`${requestOptions.method} ${path} - ${error.status} in ${Date.now() - start}ms`);
+      throw error;
+    });
+  });
+}
+requestLog.VERSION = VERSION;
+
+exports.requestLog = requestLog;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
 /***/ 6865:
 /***/ ((__unused_webpack_module, exports) => {
 
@@ -4173,6 +4211,32 @@ const request = withDefaults(endpoint.endpoint, {
 });
 
 exports.request = request;
+//# sourceMappingURL=index.js.map
+
+
+/***/ }),
+
+/***/ 7276:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+var __webpack_unused_export__;
+
+
+__webpack_unused_export__ = ({ value: true });
+
+var core = __nccwpck_require__(7196);
+var pluginRequestLog = __nccwpck_require__(6173);
+var pluginPaginateRest = __nccwpck_require__(9445);
+var pluginRestEndpointMethods = __nccwpck_require__(6865);
+
+const VERSION = "18.12.0";
+
+const Octokit = core.Octokit.plugin(pluginRequestLog.requestLog, pluginRestEndpointMethods.legacyRestEndpointMethods, pluginPaginateRest.paginateRest).defaults({
+  userAgent: `octokit-rest.js/${VERSION}`
+});
+
+exports.v = Octokit;
 //# sourceMappingURL=index.js.map
 
 
@@ -9182,51 +9246,87 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__nccwpck_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/compat */
 /******/ 	
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry need to be wrapped in an IIFE because it need to be in strict mode.
 (() => {
+"use strict";
+__nccwpck_require__.r(__webpack_exports__);
+/* harmony import */ var _octokit_rest__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(7276);
 const core = __nccwpck_require__(6024);
 const github = __nccwpck_require__(5016);
 const lineReader = __nccwpck_require__(4821);
 
-const regex = {
-  getRegexHash() {
-    const regexHash = {}
 
-    const jsonData = __nccwpck_require__(6088);
-    const causesEntries = Object.entries(jsonData.causes)
-    const nbrCauses = causesEntries.length
-    let nbrIndications = 0
-    for(const [id, cause] of causesEntries) {
-      for(const indication of cause.indications){
-        regexHash[indication] = id
-        nbrIndications++
-      }
-    }
-    console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s)`)
-  }
-};
 
 try {
+  const regex = {
+    getRegexHash() {
+      const regexHash = {}
+
+      const jsonData = __nccwpck_require__(6088);
+      const causesEntries = Object.entries(jsonData.causes)
+      const nbrCauses = causesEntries.length
+      let nbrIndications = 0
+      for(const [id, cause] of causesEntries) {
+        for(const indication of cause.indications){
+          let object = {}
+          object['id'] = id
+          object['regex'] = new RegExp(indication);
+          regexHash[indication] = object
+          nbrIndications++
+        }
+      }
+      console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s)`)
+      return Object.entries(regex.getRegexHash())
+    }
+  };
+
+
+  const pullRequest = {
+    update(message){
+    }
+  }
+
+  const githubContext = github.context;
+  if (githubContext.payload.pull_request == null) {
+    core.setFailed('No pull request found.');
+    throw new Error('No pull request found.');
+  }
+  const pull_request_number = githubContext.payload.pull_request.number;
+
   const pathLogFile = core.getInput('path-log-file');
   const githubToken = core.getInput('github-token');
   const githubDatabaseRepo = core.getInput('github-database-repo');
 
-  console.log(`Go read file at : ${pathLogFile}!`);
+  const octokit = new _octokit_rest__WEBPACK_IMPORTED_MODULE_0__/* .Octokit */ .v({
+    auth: githubToken
+  });
+
+  console.debug(`Go read file at : ${pathLogFile}!`);
 
   const regexHash = regex.getRegexHash()
   lineReader.eachLine(pathLogFile, function(line, last) {
-
-    var re = new RegExp("ab+c");
-
-    console.log('Line ' + line);
-    if(last) {
-      console.log('Last line printed.');
+    for(const [regex, regexElement] of regexHash){
+      if(regexElement.regex.test(line)){
+        console.debug(`Indication ${regex} of cause ${regexElement.id} is matching the line \n ${line}`)
+        // Format Message to append in the error message
+      }
     }
   });
 

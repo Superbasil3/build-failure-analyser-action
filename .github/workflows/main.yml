@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Create log file
         run: |
-          echo 'toto' > ${RUNNER_TEMP}/logs.txt
+          echo 'This is a test' > ${RUNNER_TEMP}/logs.txt
           echo "${RUNNER_TEMP}/logs.txt"
           cat "${RUNNER_TEMP}/logs.txt"
       - id: generate_path_logs
