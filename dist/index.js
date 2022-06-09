@@ -9195,17 +9195,20 @@ const github = __nccwpck_require__(5016);
 const lineReader = __nccwpck_require__(4821);
 
 const regex = {
-  getRegexList() {
+  getRegexHash() {
     const regexHash = {}
-    let jsonData = __nccwpck_require__(6088);
-    console.log(jsonData);
-    for(const [id, cause] of  Object.entries(jsonData.causes)) {
+
+    const jsonData = __nccwpck_require__(6088);
+    const causesEntries = Object.entries(jsonData.causes)
+    const nbrCauses = causesEntries.length
+    let nbrIndications = 0
+    for(const [id, cause] of causesEntries) {
       for(const indication of cause.indications){
-        console.log("indication : " + indication)
         regexHash[indication] = id
+        nbrIndications++
       }
     }
-    console.log(regexHash)
+    console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s)`)
   }
 };
 
@@ -9216,13 +9219,17 @@ try {
 
   console.log(`Go read file at : ${pathLogFile}!`);
 
+  const regexHash = regex.getRegexHash()
   lineReader.eachLine(pathLogFile, function(line, last) {
+
+    var re = new RegExp("ab+c");
+
     console.log('Line ' + line);
     if(last) {
       console.log('Last line printed.');
     }
   });
-  regex.getRegexList()
+
 } catch (error) {
   core.setFailed(error.message);
 }
