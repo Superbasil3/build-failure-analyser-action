@@ -27,7 +27,7 @@ jobs:
       - id: run_build_failure_analyser
         if: always()
         name: Run job failure analyser
-        uses: Superbasil3/build-failure-analyser-action@v3.3.3
+        uses: Superbasil3/build-failure-analyser-action@v0.1.0
         with:
           path-log-file: ${{ steps.generate_variable.outputs.path_logs }}
           path-log-database-json: ${{ steps.generate_variable.outputs.path_json_database }}
