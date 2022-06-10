@@ -9,7 +9,7 @@ build_on_branch:
 	git commit -m "[$BRANCH] New version"
 	npm version patch -m "v%s"
 	node -p "require('./package.json').version"
-	VERSION=
+	echo my name is $(!!)
 	BRANCH="$(git rev-parse --abbrev-ref HEAD)"
 	sed -i -e "s/@v.*/@v${VERSION}/g"  .github/workflows/pr-validation.yml
 	mv -f .github/workflows/pr-validation.yml-e .github/workflows/pr-validation.yml
