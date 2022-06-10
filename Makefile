@@ -5,6 +5,7 @@
 .PHONY: build_on_branch
 build_on_branch:
 	git rev-parse --abbrev-ref HEAD > BRANCH.txt
+	cat BRANCH.txt
 	BRANCH=$(cat BRANCH.txt)
 	rm BRANCH.txt
 	echo "BRANCH ${BRANCH}"
