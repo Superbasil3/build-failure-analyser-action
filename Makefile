@@ -7,7 +7,8 @@ build_on_branch:
 	ncc build src/index.js --license LICENSE -o dist/
 	git add .
 	git commit -m "[$BRANCH] New version"
-	npm version minor -m "v%s"
+	npm version patch -m "v%s"
+	git rev-parse --abbrev-ref HEAD
 	BRANCH=$(git rev-parse --abbrev-ref HEAD)
 	VERSION=$(node -p "require('./package.json').version")
 	sed -i -e "s/@v.*/@v${VERSION}/g"  .github/workflows/pr-validation.yml
