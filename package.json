@@ -1,6 +1,6 @@
 {
   "name": "build-failure-analyser-action",
-  "version": "1.2.1",
+  "version": "0.3.3",
   "description": "A GitHub Action for validating the Branch, PR and commits naming",
   "main": "src/index.js",
   "scripts": {

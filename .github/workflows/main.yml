@@ -5,26 +5,13 @@ on:
 
 
 jobs:
-  hello_world_job:
+  release-job:
     runs-on: ubuntu-latest
-    name: Try build-failure-analyser-action
+    name:
     steps:
-      - name: Create log file
+      - name: Release
         run: |
-          echo 'This is a test' > ${RUNNER_TEMP}/logs.txt
-          echo "${RUNNER_TEMP}/logs.txt"
-          cat "${RUNNER_TEMP}/logs.txt"
-      - id: generate_path_logs
-        run: |
-          echo "::set-output name=path_logs::$(echo ${RUNNER_TEMP,,}'/logs.txt')"
-          echo "::set-output name=path_json_database::$(echo ${RUNNER_TEMP,,}'/remote-database.json')"
-      - id :
-        run : curl https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/alpha/database.json -o ${{ steps.generate_path_logs.outputs.path_json_database }}
-      - name: Run test
-        id: run
-        uses: Superbasil3/build-failure-analyser-action@v0.3.3
-        with:
-          path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
-          path-log-database-json: ${{ steps.generate_path_logs.outputs.path_json_database }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          github-database-repo: 'TATA'
+          npm version patch -m "v%s"
+          ncc build src/index.js -o dist/
+          VERSION=$(node -p "require('./package.json').version")
+          git tag ${VERSION}

@@ -4,7 +4,7 @@
 
 .PHONY: build
 build:
-	ncc build index.js --license licenses.txt
+	ncc build src/index.js --license LICENSE -o dist/
 	git add .
 	git commit -m "Make build"
 	git tag -d v0.3.3
