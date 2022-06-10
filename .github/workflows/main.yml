@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Release
         run: |
-          npm version patch -m "v%s"
+          npm version minor -m "v%s"
           ncc build src/index.js -o dist/
           VERSION=$(node -p "require('./package.json').version")
           git tag ${VERSION}
