@@ -8,7 +8,7 @@ build_on_branch:
 	git add .
 	git commit -m "[$BRANCH] New version"
 	npm version patch -m "v%s"
-	VERSION=node -p "require('./package.json').version"
+	VERSION=$(node -p "require('./package.json').version")
 
 
 
