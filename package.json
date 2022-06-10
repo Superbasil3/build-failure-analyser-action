@@ -1,10 +1,11 @@
 {
   "name": "build-failure-analyser-action",
   "version": "1.0.0",
-  "description": "This action prints \"Hello World\" or \"Hello\" + the name of a person to greet to the log.",
-  "main": "dist/index.js",
+  "description": "A GitHub Action for validating the Branch, PR and commits naming",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ncc build src/index.js -o dist/"
   },
   "repository": {
     "type": "git",

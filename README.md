@@ -1,6 +1,6 @@
-# Hello world javascript action
+# Build Failure Analyser Action
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+A GitHub action for checking when a step is in error, matching some regex that could help resolved already analysed issues.
 
 ## Inputs
 
@@ -24,7 +24,17 @@ This action prints "Hello World" or "Hello" + the name of a person to greet to t
 
 
 ## Example usage
-
+```
 uses: actions/build-failure-analyser-action@v0.1
 with:
   who-to-greet: 'Mona the Octocat'
+```
+
+## Full Example usage
+```
+uses: actions/build-failure-analyser-action@v0.1
+with:
+  who-to-greet: 'Mona the Octocat'
+```
+
+## Current limitations
