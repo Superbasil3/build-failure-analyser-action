@@ -8,10 +8,15 @@ build_on_branch:
 	git add .
 	git commit -m "[$BRANCH] New version"
 	npm version patch -m "v%s"
-	VERSION=`$(node -p \"require('./package.json').version\")`
-	echo "$VERSION"``
+	node -p \"require('./package.json').version\" > VERSION.txt
+	VERSION=$(cat VERSION.txt)
+	rm VERSION.txt
+	echo "VERSION ${VERSION}"
 
-	BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+	git rev-parse --abbrev-ref HEAD > BRANCH.txt
+	BRANCH=$(cat BRANCH.txt)
+	rm BRANCH.txt
+	echo "BRANCH ${BRANCH}"
 	sed -i -e "s/@v.*/@v${VERSION}/g"  .github/workflows/pr-validation.yml
 	mv -f .github/workflows/pr-validation.yml-e .github/workflows/pr-validation.yml
 	git tag -d "v${VERSION}"
