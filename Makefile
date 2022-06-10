@@ -4,9 +4,8 @@
 
 .PHONY: build_on_branch
 build_on_branch:
-	BRANCH := $(git rev-parse --abbrev-ref HEAD); \
-	echo "BRANCH ${BRANCH}"
-
+	export MY_ID=$(git rev-parse --abbrev-ref HEAD); \
+	echo "$BRANCH"
 	ncc build src/index.js --license LICENSE -o dist/
 	git add .
 	git commit -m "[${BRANCH}] New version"
