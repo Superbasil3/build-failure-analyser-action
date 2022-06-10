@@ -2,7 +2,7 @@
   "name": "build-failure-analyser-action",
   "version": "1.0.0",
   "description": "This action prints \"Hello World\" or \"Hello\" + the name of a person to greet to the log.",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,8 +11,8 @@
     "url": "git+https://github.com/Superbasil3/build-failure-analyser-action.git"
   },
   "keywords": [],
-  "author": "superbasil",
-  "license": "ISC",
+  "author": "superbasil3",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/Superbasil3/build-failure-analyser-action/issues"
   },
@@ -23,8 +23,6 @@
     "@octokit/rest": "^18.12.0",
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
-    "json-buffer": "^3.0.1",
-    "line-reader": "^0.4.0",
-    "sync-request": "^6.1.0"
+    "line-reader": "^0.4.0"
   }
 }
