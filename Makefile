@@ -4,10 +4,7 @@
 
 .PHONY: build_on_branch
 build_on_branch:
-	git rev-parse --abbrev-ref HEAD > BRANCH.txt
-	cat BRANCH.txt
-	BRANCH=$(cat BRANCH.txt)
-	rm BRANCH.txt
+	BRANCH := $(git rev-parse --abbrev-ref HEAD); \
 	echo "BRANCH ${BRANCH}"
 
 	ncc build src/index.js --license LICENSE -o dist/
