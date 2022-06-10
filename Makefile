@@ -2,19 +2,14 @@
 ## Lint
 ##
 
-.PHONY: build_on_branch
-build_on_branch:
-	BRANCH=$(git rev-parse --abbrev-ref HEAD);
-	echo "BRANCH: ${BRANCH}"
+
+.PHONY: build_on_branch_alpha
+build_on_branch_alpha:
 	ncc build src/index.js --license LICENSE -o dist/
 	git add .
-	git commit -m "[${BRANCH}] New version"
+	git commit -m "[alpha] New version"
 	npm version patch -m "v%s"
-	node -p "require('./package.json').version" > VERSION.txt
-	VERSION=$(cat VERSION.txt)
-	rm VERSION.txt
-	echo "VERSION ${VERSION}"
-
+	VERSION=3.3.3
 	sed -i -e "s/@v.*/@v${VERSION}/g"  .github/workflows/pr-validation.yml
 	mv -f .github/workflows/pr-validation.yml-e .github/workflows/pr-validation.yml
 	git tag -d "v${VERSION}"
