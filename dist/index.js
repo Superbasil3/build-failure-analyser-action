@@ -9214,15 +9214,12 @@ try {
     }
 
     function formatComment(comments, pathJson){
-        let formatedMessage = '# Build failure analyzer action[^1]'
+        let formattedMessage = '# Build failure analyzer action[^1]'
         const jsonData = require(pathJson);
         const causesEntries = Object.entries(jsonData.causes)
 
-
-
-        //
-        // [^1]:  This message will be updated / deleted depending of the latest build result -  [TEST](HTTP://www.google.com)
         let nbrIteration = 0
+        console.log("comment" + comments.toString())
         for(const comment of comments) {
             nbrIteration++
             console.log("comment" + comment.toString())
@@ -9232,10 +9229,10 @@ try {
 ## ${nbrIteration} **${causeName.id} (${comment.id})** - line ${comment.lineNbr} 
 \`${comment.line}\` 
 ${cause.description} this is a test`
-            formatedMessage += template
+            formattedMessage += template
         }
-        formatedMessage += '\n# Build failure analyzer action[^1]'
-        return formatedMessage
+        formattedMessage += '\n[^1]:  This message will be updated / deleted depending of the latest build result - [build-failure-analyser-action](https://github.com/Superbasil3/build-failure-analyser-action)'
+        return formattedMessage
     }
 
 
