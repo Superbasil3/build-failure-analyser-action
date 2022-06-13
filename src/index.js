@@ -64,7 +64,6 @@ ${cause.description} this is a test`
                 owner: owner,
                 repo: repo
             })
-            commentsToAdd.push("FAILURE_REPORT")
             for (const comment of comments) {
                 console.log(`comment.user.login ${comment.user.login}`)
             }
@@ -77,12 +76,10 @@ ${cause.description} this is a test`
                 pullRequest.deleteComments(owner, repo, botComment.id)
             } else if (typeof botComment !== 'undefined' && botComment) {
                 console.debug(`Replace comment : ${botComment.id}`)
-                commentsToAdd.push("REPLACE_COMMENT")
                 core.setOutput("status", "Status still in error, updating comment");
                 pullRequest.replaceComments(owner, repo, commentsToAdd, botComment.id)
             } else if (stepFailed) {
                 console.debug(`Create comment`)
-                commentsToAdd.push("CREATE_COMMENT")
                 core.setOutput("status", "Status in error, creating comment");
                 pullRequest.createComments(owner, repo, issueNumber, commentsToAdd)
             }
@@ -93,7 +90,7 @@ ${cause.description} this is a test`
                 issue_number: issueNumber,
                 owner: owner,
                 repo: repo,
-                body: comments.join(" and ")
+                body: formatComment(comments)
             })
         },
 
@@ -110,7 +107,7 @@ ${cause.description} this is a test`
                 owner: owner,
                 repo: repo,
                 comment_id: commentId,
-                body: comments.join(" and ")
+                body: formatComment(comments)
             })
         }
     }
