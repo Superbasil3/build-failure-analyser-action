@@ -9219,11 +9219,13 @@ try {
         const causesEntries = Object.entries(jsonData.causes)
 
         let nbrIteration = 0
-        console.log("comment" + comments.toString())
+        console.log("comments : " + comments.toString())
         for(const comment of comments) {
             nbrIteration++
-            console.log("comment" + comment.toString())
+            console.log("comment : " + comment.toString())
             let cause = causesEntries[comment.id]
+            console.log("comment_id : " + comment.id)
+            console.log("cause : " + cause.toString())
             let causeName = cause.name
             let template = `
 ## ${nbrIteration} **${causeName.id} (${comment.id})** - line ${comment.lineNbr} 
