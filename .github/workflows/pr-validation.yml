@@ -13,7 +13,7 @@ jobs:
       - id: generate_log_file
         name: Create log file
         run: |
-          echo 'This is a test' > ${RUNNER_TEMP}/logs.txt
+          echo 'This is a test' > ${RUNNER_TEMP}/logs.txt && exit 1
       - id: generate_variable
         if: always()
         name : Generate Varirable
