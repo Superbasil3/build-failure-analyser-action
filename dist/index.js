@@ -9192,6 +9192,7 @@ try {
     const githubToken = core.getInput('github-token');
     const pathLogDatabaseJson = core.getInput('path-log-database-json');
     const stepOutcome = core.getInput('step-outcome');
+    const defaultTitle = '# Build failure analyzer action[^1]'
 
 
     function getRegexHash(pathJson) {
@@ -9214,7 +9215,7 @@ try {
     }
 
     function formatComment(comments){
-        let formattedMessage = '# Build failure analyzer action[^1]'
+        let formattedMessage = defaultTitle
         const jsonData = require(pathLogDatabaseJson);
         let nbrIteration = 0
         for(const comment of comments) {
@@ -9245,7 +9246,7 @@ ${cause.description}`
                 console.log(`comment.user.login ${comment.user.login}`)
             }
             let stepFailed = stepOutcome === 'failure'
-            const botComment = comments.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes("FAILURE_REPORT"))
+            const botComment = comments.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes(defaultTitle))
             console.debug(`botComment ${botComment}`)
             if (typeof botComment !== 'undefined' && botComment && !stepFailed) {
                 console.debug(`Delete comment : ${botComment.id}`)
