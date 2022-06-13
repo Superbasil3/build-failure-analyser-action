@@ -9216,8 +9216,6 @@ try {
     function formatComment(comments){
         let formattedMessage = '# Build failure analyzer action[^1]'
         const jsonData = require(pathLogDatabaseJson);
-        const causesEntries = Object.entries(jsonData.causes)
-
         let nbrIteration = 0
         console.log("comments : " + comments.toString())
         for(const comment of comments) {
