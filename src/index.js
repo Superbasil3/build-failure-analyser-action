@@ -41,7 +41,10 @@ try {
             console.log("comment : " + comment.toString())
             let cause = causesEntries[comment.id]
             console.log("comment_id : " + comment.id)
-            console.log("cause : " + cause.toString())
+            for (var i = 0, keys = Object.keys(cause), ii = keys.length; i < ii; i++) {
+                console.log(keys[i] + '|' + cause[keys[i]].list);
+            }
+            console.log("cause : " + cause)
             let causeName = cause.name
             let template = `
 ## ${nbrIteration} **${causeName.id} (${comment.id})** - line ${comment.lineNbr} 
