@@ -1,8 +1,8 @@
 {
   "causes": {
     "ID_1": {
-      "name": "NAME_1",
-      "description": "DESCRIPTION_1",
+      "name": "Name 1 - 'a' inside the message",
+      "description": "This is the description of the issue 1",
       "comment": "",
       "indications": [
         " a ",
@@ -10,11 +10,11 @@
       ]
     },
     "ID_2": {
-      "name": "NAME_2",
-      "description": "DESCRIPTION_2",
+      "name": "Name 2 - 'test' inside the message",
+      "description": "This is the description of the issue 2",
       "comment": "",
       "indications": [
-        "PATTERN_2_a",
+        "test",
         "PATTERN_2_b"
       ]
     }

@@ -33,22 +33,16 @@ try {
         let formattedMessage = '# Build failure analyzer action[^1]'
         const jsonData = require(pathLogDatabaseJson);
         let nbrIteration = 0
-        console.log("comments : " + comments.toString())
         for(const comment of comments) {
             nbrIteration++
-            console.log("comment : " + comment.toString())
             let cause = jsonData.causes[comment.id]
-            console.log("comment_id : " + comment.id)
-            console.log("cause : " + cause)
-
-            let causeName = cause.name
             let template = `
-## ${nbrIteration} **${causeName.id} (${comment.id})** - line ${comment.lineNbr} 
+## ${nbrIteration} **${cause.name} (id : ${comment.id})** - line #${comment.lineNbr} - regex \`${comment.regex}\` 
 \`${comment.line}\` 
-${cause.description} this is a test`
+${cause.description}`
             formattedMessage += template
         }
-        formattedMessage += '\n[^1]:  This message will be updated / deleted depending of the latest build result - [build-failure-analyser-action](https://github.com/Superbasil3/build-failure-analyser-action)'
+        formattedMessage += '\n[^1]: This message will be updated / deleted depending of the latest build result - [build-failure-analyser-action](https://github.com/Superbasil3/build-failure-analyser-action)'
         return formattedMessage
     }
 
