@@ -9213,9 +9213,9 @@ try {
         return Object.entries(regexHash)
     }
 
-    function formatComment(comments, pathJson){
+    function formatComment(comments){
         let formattedMessage = '# Build failure analyzer action[^1]'
-        const jsonData = require(pathJson);
+        const jsonData = require(pathLogDatabaseJson);
         const causesEntries = Object.entries(jsonData.causes)
 
         let nbrIteration = 0
