@@ -9222,7 +9222,7 @@ try {
             nbrIteration++
             let cause = jsonData.causes[comment.id]
             let template = `
-## ${nbrIteration} **${cause.name} (id : ${comment.id})** - line #${comment.lineNbr} - regex \`${comment.regex}\` 
+## ${nbrIteration} - **${cause.name} (id : ${comment.id})** - line #${comment.lineNbr} - regex \`${comment.regex}\` 
 \`${comment.line}\` 
 ${cause.description}`
             formattedMessage += template
@@ -9246,7 +9246,7 @@ ${cause.description}`
                 console.log(`comment.user.login ${comment.user.login}`)
             }
             let stepFailed = stepOutcome === 'failure'
-            const botComment = comments.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes(defaultTitle))
+            const botComment = comments.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes('Build failure analyzer action'))
             console.debug(`botComment ${botComment}`)
             if (typeof botComment !== 'undefined' && botComment && !stepFailed) {
                 console.debug(`Delete comment : ${botComment.id}`)
