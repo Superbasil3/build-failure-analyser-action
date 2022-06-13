@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  hello_world_job:
+  pr_validation:
     runs-on: ubuntu-latest
     name: Try build-failure-analyser-action
     steps:
