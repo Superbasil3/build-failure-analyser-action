@@ -9225,6 +9225,7 @@ try {
         let nbrIteration = 0
         for(const comment of comments) {
             nbrIteration++
+            console.log("comment" + comment.toString())
             let cause = causesEntries[comment.id]
             let causeName = cause.name
             let template = `
