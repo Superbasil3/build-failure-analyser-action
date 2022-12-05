@@ -1,0 +1,14 @@
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  release-action:
+    runs-on: ubuntu-latest
+    name: Release build-failure-analyser-action
+    steps:
+      - uses: actions/checkout@v3
+      - run: make release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
