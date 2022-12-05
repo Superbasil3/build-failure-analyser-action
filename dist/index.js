@@ -9072,7 +9072,7 @@ function wrappy (fn, cb) {
 /***/ 6088:
 /***/ ((module) => {
 
-module.exports = eval("require")("../database.json");
+module.exports = eval("require")("../regexes.json");
 
 
 /***/ }),
