@@ -4,7 +4,10 @@
   "description": "This action prints \"Hello World\" or \"Hello\" + the name of a person to greet to the log.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint index.js",
+    "prepare": "ncc build index.js -o dist --source-map",
+    "test": "jest",
+    "all": "npm run lint && npm run prepare && npm run test"
   },
   "repository": {
     "type": "git",
@@ -22,6 +25,7 @@
     "@actions/github": "^5.0.3",
     "@octokit/rest": "^18.12.0",
     "fs": "^0.0.1-security",
-    "line-reader": "^0.4.0"
+    "line-reader": "^0.4.0",
+    "ncc": "^0.3.6"
   }
 }

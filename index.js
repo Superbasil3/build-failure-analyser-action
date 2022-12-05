@@ -1,5 +1,3 @@
-import * as fs from "fs";
-
 const core = require('@actions/core');
 const github = require('@actions/github');
 const lineReader = require('line-reader');
@@ -15,17 +13,6 @@ async function updatePR(octokit, message, owner, repo, prNumber) {
         body: message
     });
     console.log(result);
-}
-
-// function to check if the line matches any of the regexes
-function checkLine(line, regexes) {
-    let result = false;
-    regexes.forEach(regex => {
-        if (line.match(regex)) {
-            result = true;
-        }
-    });
-    return result;
 }
 
 //Define constant string with a generic message to be used in the PR
@@ -61,9 +48,6 @@ try {
         update(message) {
         }
     }
-// reformat the code to make it more readable
-
-
     const githubContext = github.context;
     if (githubContext.payload.pull_request == null) {
         core.setFailed('No pull request found.');
