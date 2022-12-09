@@ -2,16 +2,16 @@
   "causes": {
     "ID_1": {
       "name": "NAME_1",
-      "description": "DESCRIPTION_1",
+      "description": ["DESCRIPTION_1_LINE_1", "DESCRIPTION_1_LINE_2"],
       "comment": "",
       "indications": [
-        " a ",
+        "\\[error\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed Host header",
         "PATTERN_1_b"
       ]
     },
     "ID_2": {
       "name": "NAME_2",
-      "description": "DESCRIPTION_2",
+      "description": ["DESCRIPTION_2"],
       "comment": "",
       "indications": [
         "PATTERN_2_a",
