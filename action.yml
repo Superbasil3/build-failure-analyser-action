@@ -7,13 +7,9 @@ inputs:
   github-token:
     description: "Token with access to update message, and read the database"
     required: true
-  github-database-repo:
-    description: "Url of the repo with the json config file"
+  regexes-file-location:
+    description: "Url or local file path to the json file containing the regexes"
     required: true
-
-outputs:
-  time:
-    description: 'The time we greeted you'
 runs:
   using: 'node16'
   main: 'dist/index.js'

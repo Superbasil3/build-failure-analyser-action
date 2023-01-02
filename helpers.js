@@ -1,8 +1,4 @@
 const lineReader = require('line-reader');
-const https = require('https');
-const fs = require('fs');
-
-//
 
 const unshuffled = ['👎', '🙄', '👀', '🦹', '🥉', '🌡️', '🤔', '⏰', '🌵', '😮‍💨', '🧄', '❌', '⚡'];
 
@@ -17,28 +13,6 @@ const shuffled = unshuffled
  */
 const getFileNameFromPath = function(pathLogFile) {
   return pathLogFile.split('\\').pop().split('/').pop();
-};
-
-/**
- * @param {string} url
- * @param {string} fileName
- * @return {Promise<void>}
- */
-const downloadFile = async function(url, fileName) {
-  fs.readdirSync('.').forEach((file) => {
-    console.log(file);
-  });
-  https.get(url, (res) => {
-    // Image will be stored at this path
-    const path = `${__dirname}/${fileName}`;
-    const filePath = fs.createWriteStream(path);
-    res.pipe(filePath);
-    filePath.on('finish', () => {
-      filePath.close();
-      console.log('Download Completed');
-      getRegexHash(path);
-    });
-  });
 };
 
 /**
@@ -110,11 +84,24 @@ const deletePreviousComment = async function(octokit, owner, repo, prNumber) {
   }
 };
 
+const processLogs = function(regexesFileLocation, pathLogFile, messageHeader, githubContext, pullRequestNumber, octokit) {
+  const regexHash = getRegexHash(regexesFileLocation);
+  readFile(pathLogFile, regexHash, messageHeader, githubContext, pullRequestNumber, octokit);
+};
+
+/**
+ * @param {string} regexesFileLocation
+ * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
+ */
+const getRegexHash = function(regexesFileLocation) {
+  return parseRegexHash(regexesFileLocation);
+};
+
 /**
  * @param {string} pathRegexFile
  * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
  */
-const getRegexHash = function(pathRegexFile) {
+const parseRegexHash = function(pathRegexFile) {
   const regexHash = {};
   const jsonData = require(pathRegexFile);
   const causesEntries = Object.entries(jsonData.causes);
@@ -197,4 +184,4 @@ const readFile = function(pathLogFile, regexHash, messageHeader, githubContext, 
   });
 };
 
-module.exports = {downloadFile, getFileNameFromPath, getRegexHash, readFile, updatePRComment};
+module.exports = {deletePreviousComment, getFileNameFromPath, processLogs, updatePRComment};
