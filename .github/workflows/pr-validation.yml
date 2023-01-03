@@ -49,9 +49,10 @@ jobs:
           echo "[Sat Jun 24 09:06:23 2006] [notice] Apache/2.0.46 (Red Hat) DAV/2 configured -- resuming normal operations(PATTERN_2_a)"  >> ${{ steps.generate_path_logs.outputs.path_logs }}
           echo "[Sat Jun 24 09:06:22 2006] [notice] Digest: generating secret for digest authentication ..."  >> ${{ steps.generate_path_logs.outputs.path_logs }}
           echo "[Sat Jun 24 09:06:22 2006] [notice] Digest: done"  >> ${{ steps.generate_path_logs.outputs.path_logs }}
-      - name: run_build_failure_analyser_action
-        id: run
+      - name: run_build_failure_analyser_action_local_file
+        id: run_with_local_file
         uses: Superbasil3/build-failure-analyser-action@ISSUE-2
         with:
           path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          regexes-file-location: ../regexes.json

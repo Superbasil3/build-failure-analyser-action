@@ -5,10 +5,6 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const lineReader = __nccwpck_require__(3455);
-const https = __nccwpck_require__(5687);
-const fs = __nccwpck_require__(7147);
-
-//
 
 const unshuffled = ['👎', '🙄', '👀', '🦹', '🥉', '🌡️', '🤔', '⏰', '🌵', '😮‍💨', '🧄', '❌', '⚡'];
 
@@ -23,28 +19,6 @@ const shuffled = unshuffled
  */
 const getFileNameFromPath = function(pathLogFile) {
   return pathLogFile.split('\\').pop().split('/').pop();
-};
-
-/**
- * @param {string} url
- * @param {string} fileName
- * @return {Promise<void>}
- */
-const downloadFile = async function(url, fileName) {
-  fs.readdirSync('.').forEach((file) => {
-    console.log(file);
-  });
-  https.get(url, (res) => {
-    // Image will be stored at this path
-    const path = `${__dirname}/${fileName}`;
-    const filePath = fs.createWriteStream(path);
-    res.pipe(filePath);
-    filePath.on('finish', () => {
-      filePath.close();
-      console.log('Download Completed');
-      getRegexHash(path);
-    });
-  });
 };
 
 /**
@@ -116,11 +90,24 @@ const deletePreviousComment = async function(octokit, owner, repo, prNumber) {
   }
 };
 
+const processLogs = function(regexesFileLocation, pathLogFile, messageHeader, githubContext, pullRequestNumber, octokit) {
+  const regexHash = getRegexHash(regexesFileLocation);
+  readFile(pathLogFile, regexHash, messageHeader, githubContext, pullRequestNumber, octokit);
+};
+
+/**
+ * @param {string} regexesFileLocation
+ * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
+ */
+const getRegexHash = function(regexesFileLocation) {
+  return parseRegexHash(regexesFileLocation);
+};
+
 /**
  * @param {string} pathRegexFile
  * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
  */
-const getRegexHash = function(pathRegexFile) {
+const parseRegexHash = function(pathRegexFile) {
   const regexHash = {};
   const jsonData = require(pathRegexFile);
   const causesEntries = Object.entries(jsonData.causes);
@@ -203,7 +190,7 @@ const readFile = function(pathLogFile, regexHash, messageHeader, githubContext, 
   });
 };
 
-module.exports = {downloadFile, getFileNameFromPath, getRegexHash, readFile, updatePRComment};
+module.exports = {deletePreviousComment, getFileNameFromPath, processLogs, updatePRComment};
 
 
 /***/ }),
@@ -10205,14 +10192,13 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(7148);
 const github = __nccwpck_require__(2359);
 const {Octokit} = __nccwpck_require__(695);
-const {getFileNameFromPath, getRegexHash, readFile, downloadFile} = __nccwpck_require__(3212);
+const {getFileNameFromPath, processLogs} = __nccwpck_require__(3212);
 
 try {
-  const pathLogFile = core.getInput('path-log-file');
+  const pathLogFile = core.getInput('path-log-file') || '../regexes.json';
   const githubContext = github.context;
   const githubToken = core.getInput('github-token');
-  const regexesFileUrl = core.getInput('regexes-file-url') || 'https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/regexes.json';
-  console.debug(`regexesFileUrl : ${regexesFileUrl}`);
+  const regexesFileLocation = core.getInput('regexes-file-location');
   // Create a variable to store that basename from pathRegexFile
   const fileName = getFileNameFromPath(pathLogFile);
   const messageHeader = `:bangbang: [build-failure-analyser-action] : Some regexes have matched one the file ${fileName} :bangbang: \n\n`;
@@ -10221,15 +10207,10 @@ try {
     throw new Error('No pull request found.');
   }
   const pullRequestNumber = githubContext.payload.pull_request.number;
-  const regexHash = getRegexHash('../regexes.json');
   const octokit = new Octokit({
     auth: githubToken,
   });
-
-  readFile(pathLogFile, regexHash, messageHeader, githubContext, pullRequestNumber, octokit);
-
-  // Test to download files from URL
-  downloadFile(regexesFileUrl, 'regexes.downloaded.json');
+  processLogs(regexesFileLocation, pathLogFile, messageHeader, githubContext, pullRequestNumber, octokit);
 } catch (error) {
   core.setFailed(error.message);
 }

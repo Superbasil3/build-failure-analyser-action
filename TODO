@@ -1,7 +1,4 @@
-- Get logs from current run -> Github cli during run ?
-- Create JSON format of error
-- Format message
-- Action that read logs, run regex and write message
+- Get logs from current run -> Github cli during run ? -> not possible atm, Github confirmed this to me
 - Write action to validate json entry
 - Write github web-page to validate repo
  - Fill fields and display message + generate json
