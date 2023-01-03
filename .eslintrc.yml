@@ -5,7 +5,7 @@ env:
 extends: google
 overrides: [
 ]
-ignorePatterns: ['dist/*']
+ignorePatterns: ['dist/*', 'docs/*']
 parserOptions:
   ecmaVersion: latest
 rules: {

@@ -100,31 +100,88 @@ const processLogs = function(regexesFileLocation, pathLogFile, messageHeader, gi
  * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
  */
 const getRegexHash = function(regexesFileLocation) {
-  return parseRegexHash(regexesFileLocation);
+  return parseRegexHash(getJsonContent(regexesFileLocation));
 };
 
 /**
- * @param {string} pathRegexFile
+ * @param {String} pathRegexFile
+ * @return {string}
+ */
+const getJsonContent = function(pathRegexFile) {
+  return require(pathRegexFile);
+};
+
+/**
+ * @param {String} regexesContent
+ * @return {String[]}
+ */
+const validateRegex = function(regexesContent) {
+  const regexes = JSON.parse(regexesContent);
+  const message = [];
+  if (!regexes.hasOwnProperty('causes')) {
+    message.push('Json must contain a "causes" property.');
+  } else {
+    const causesEntries = Object.entries(regexes.causes);
+    for (const [id, cause] of causesEntries) {
+      if (!cause.hasOwnProperty('name')) {
+        message.push(`Cause ${id} must contain a "name" property.`);
+      }
+      if (!cause.hasOwnProperty('description')) {
+        message.push(`Cause ${id} must contain a "description" property.`);
+      }
+      if (!cause.hasOwnProperty('indications')) {
+        message.push(`Cause ${id} must contain an "indications" property.`);
+      } else {
+        if (!Array.isArray(cause.indications)) {
+          message.push(`Cause ${id} must contain an "indications" property of type Array.`);
+        }
+      }
+      if (cause.hasOwnProperty('test_lines_to_match')) {
+        if (!Array.isArray(cause.test_lines_to_match)) {
+          message.push(`Cause causes.${id}.test_lines_to_match must be a property of type Array.`);
+        } else {
+          for (const testLine of cause.test_lines_to_match) {
+            // We want that one test line match is matched by a least one indication
+            let checkLineMatched = false;
+            for (const indication of cause.indications) {
+              if (new RegExp(indication).test(testLine)) {
+                checkLineMatched = true;
+                break;
+              }
+            }
+            if (!checkLineMatched) {
+              message.push(`Cause causes.${id}.test_lines_to_match must be matched by at least one indication.`);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  return message;
+};
+
+/**
+ * @param {string} regexesContent
  * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
  */
-const parseRegexHash = function(pathRegexFile) {
+const parseRegexHash = function(regexesContent) {
   const regexHash = {};
-  const jsonData = require(pathRegexFile);
-  const causesEntries = Object.entries(jsonData.causes);
+  const causesEntries = Object.entries(regexesContent.causes);
   const nbrCauses = causesEntries.length;
   let nbrIndications = 0;
   for (const [id, cause] of causesEntries) {
     for (const indication of cause.indications) {
-      const object = {};
-      object['id'] = id;
-      object['name'] = cause.name;
-      object['description'] = String(cause.description).split(',').join('</br>');
-      object['regex'] = new RegExp(indication);
-      regexHash[indication] = object;
+      regexHash[indication] = {
+        id: id,
+        name: cause.name,
+        description: String(cause.description).split(',').join('</br>'),
+        regex: new RegExp(indication),
+      };
       nbrIndications++;
     }
   }
-  console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s) from the file ${getFileNameFromPath(pathRegexFile)}`);
+  console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s) from the file`);
   return Object.entries(regexHash);
 };
 
@@ -190,7 +247,7 @@ const readFile = function(pathLogFile, regexHash, messageHeader, githubContext, 
   });
 };
 
-module.exports = {deletePreviousComment, getFileNameFromPath, processLogs, updatePRComment};
+module.exports = {deletePreviousComment, formatGlobalCommentTab, formatMessageTab, getFileNameFromPath, parseRegexHash, processLogs, updatePRComment, validateRegex};
 
 
 /***/ }),
