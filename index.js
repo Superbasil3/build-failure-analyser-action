@@ -4,7 +4,7 @@ const {Octokit} = require('@octokit/rest');
 const {getFileNameFromPath, processLogs} = require('./helpers');
 
 try {
-  const pathLogFile = core.getInput('path-log-file');
+  const pathLogFile = core.getInput('path-log-file') || '../regexes.json';
   const githubContext = github.context;
   const githubToken = core.getInput('github-token');
   const regexesFileLocation = core.getInput('regexes-file-location');

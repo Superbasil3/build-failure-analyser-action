@@ -1,22 +1,21 @@
 # Build-failure-analyse Action
 
-This action prints "Hello World" or "Hello" + the name of a person to greet to the log.
+This action is analysing a log file againt a json list of regexes to match potential recurrent build failures.
 
 ## Inputs
 
-## `who-to-greet`
 
-**Required** The name of the person to greet. Default `"World"`.
+## `path-log-file`
 
-## `who-to-greet`
+**Not Required**  "Where the log file is located". Default `../regexes.json`.
 
-**Required** The name of the person to greet. Default `"World"`.
+## `github-token`
 
-## `who-to-greet`
+**Required** GitHub token with permission to read / create / delete PR comment. Default `none`.
 
-**Required** The name of the person to greet. Default `"World"`.
+## `regexes-file-location`
 
-
+**Required** The system file location of the regexes to run again the log file. Default `none`.
 
 ## Outputs
 
@@ -31,13 +30,23 @@ with:
 
 ## Message format
 
-<!-- id_build_failure_analyser_action_3 -->:bangbang: [build-failure-analyser-action] : Some regexes have matched one the file logs.txt :bangbang: 
-The line 
+<!-- id_build_failure_analyser_action_4 -->:bangbang: [build-failure-analyser-action] : Some regexes have matched one the file logs.txt :bangbang: 
+
+### <ins>Match n°1<ins> ⏰
 ```
-Fri Dec 16 01:46:23 2005] [error] [client 1.2.3.4] Directory index forbidden by rule: /home/test/
+[Fri Dec 16 02:25:55 2005] [error] [client 1.2.3.4] Client sent malformed Host header
 ```
-has been match with the rule(s) : 
-- `regex` (ID / NAME) : 
-  - DEscription
-  
+| ID | Name | Regex | Description |
+| --- | --- | --- | --- |
+| ID_1 | NAME_1 | `\[error\] \[client \d+\.\d+\.\d+\.\d+\] Client sent malformed Host header` | DESCRIPTION_1_LINE_1</br>DESCRIPTION_1_LINE_2 |
+---
+### <ins>Match n°2<ins> ❌
+```
+[Sat Jun 24 09:06:23 2006] [notice] Apache/2.0.46 (Red Hat) DAV/2 configured -- resuming normal operations(PATTERN_2_a)
+```
+| ID | Name | Regex | Description |
+| --- | --- | --- | --- |
+| ID_2 | NAME_2 | `PATTERN_2_a` | DESCRIPTION_2 |
+---
+
 
