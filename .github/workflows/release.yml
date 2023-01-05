@@ -9,6 +9,18 @@ jobs:
     name: Release build-failure-analyser-action
     steps:
       - uses: actions/checkout@v3
-      - run: make release
+      - name: set_node.js_16.x
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 16.x
+      - name: install_ncc_modules
+        run: npm install ncc
+      - name: run_lint
+        run: npm run lint
+      - name: run_test
+        run:
+          npm run test
+      - name: make_release
+        run: make release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
