@@ -2,29 +2,33 @@
   "causes": {
     "ID_1": {
       "name": "NAME_1",
-      "description": ["DESCRIPTION_1_LINE_1", "DESCRIPTION_1_LINE_2"],
-      "comment": "",
-      "indications": [
-        "\\[error\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed Host header",
-        "PATTERN_1_b"
+      "description": [
+        "DESCRIPTION_1_LINE_1",
+        "DESCRIPTION_1_LINE_2"
       ],
-      "matching_test": {
-        "line_to_match": "PATTERN_1_b",
-        "line_to_not_match": "PATTERN_1_c"
-      }
+      "indications": [
+        "PATTERN_1_a",
+        "PATTERN_1_b",
+        "\\[error\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed Host header"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ]
     },
     "ID_2": {
       "name": "NAME_2",
-      "description": ["DESCRIPTION_2"],
-      "comment": "",
+      "description": [
+        "DESCRIPTION_2"
+      ],
       "indications": [
         "PATTERN_2_a",
-        "PATTERN_2_b"
+        "PATTERN_2_a"
       ],
-      "matching_test": {
-        "line_to_match": "PATTERN_1_a",
-        "line_to_not_match": "PATTERN_1_c"
-      }
+      "test_lines_to_match": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ]
     }
   }
 }

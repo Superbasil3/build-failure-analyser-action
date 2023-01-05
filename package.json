@@ -27,7 +27,8 @@
     "deasync": "^0.1.28",
     "fs": "^0.0.1-security",
     "line-reader": "^0.4.0",
-    "ncc": "^0.3.6"
+    "ncc": "^0.3.6",
+    "showdown": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^8.29.0",

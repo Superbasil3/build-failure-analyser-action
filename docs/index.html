@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>build-failure-analyser-action validation by Superbasil3</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <link rel="shortcut icon" type="image/x-icon" href="JaketheDog.ico">
+    <script src="javascripts/scale.fix.js"></script>
+    <script src="javascripts/bundle.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("beautify_json").onclick = function () {
+          beautifyJson();
+        };
+        document.getElementById("validate_json").onclick = function () {
+          validateRegexesFileFormat(document.getElementById("input_json_string").value)
+        };
+        document.getElementById("match_logs").onclick = function () {
+          try {
+            let jsonInput = document.getElementById("input_json_string").value
+            let logInput = document.getElementById("input_logs_string").value
+            runRegex(parseRegexesContent(jsonInput), logInput)
+          } catch (e) {
+            document.getElementById('input_logs_string_message').innerHTML = '<p>' + e.message + '</p><p>' + e.stack + '</p>';
+            document.getElementById('input_logs_string_message').className = 'error';
+          }
+        };
+      })
+    </script>
+  </head>
+  <body>
+    <div class="wrapper" style="width: 80%;">
+        <div class="container text-center" style="text-align: center">
+          <h1>Validating regexes json files</h1>
+          <p>This is made to validate config for using GitHub Action : build-failure-analyser-action</p>
+          <div style="width: 100%;">
+            <textarea id="input_json_string" name="input_json_string" rows="15" style="width: 90%;" autofocus="true" placeholder="Put your JSON regex file here">{
+  "causes": {
+    "ID_1": {
+      "name": "NAME_1",
+      "description": [
+        "DESCRIPTION_1_LINE_1",
+        "DESCRIPTION_1_LINE_2"
+      ],
+      "indications": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ]
+    },
+    "ID_2": {
+      "name": "NAME_2",
+      "description": [
+        "DESCRIPTION_2"
+      ],
+      "indications": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ]
+    }
+  }
+}</textarea>
+            <div id="input_json_string_message" ></div>
+          </div>
+          <div style="width: 100%;">
+            <textarea id="input_logs_string" name="input_logs_string" rows="15" style="width: 90%;" placeholder="Put your log file here">
+Matching Line PATTERN_1_a
+Not Matching Line PATTERN_1_b</textarea>
+          </div>
+          <div>
+            <div style="margin: 17px 0;padding: 0px 0px 20px 0px;">
+              <span id="beautify_json" class="button encode" >Beautify Json</span>
+              <span id="validate_json" class="button encode" >Validate Json</span>
+              <span id="match_logs" class="button encode" >Match logs</span>
+            </div>
+          </div>
+          <div style="width: 100%;">
+            <div id="input_logs_string_message" ></div>
+          </div>
+        </div>
+      </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/Superbasil3/">Superbasil3</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
+
+

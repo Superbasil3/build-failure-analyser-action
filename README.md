@@ -4,7 +4,6 @@ This action is analysing a log file againt a json list of regexes to match poten
 
 ## Inputs
 
-
 ## `path-log-file`
 
 **Not Required**  "Where the log file is located". Default `../regexes.json`.
@@ -49,4 +48,6 @@ with:
 | ID_2 | NAME_2 | `PATTERN_2_a` | DESCRIPTION_2 |
 ---
 
+## Config testing
+You can check the json of rules and/or validate against a lot file on the [build-failure-analyser-action GitHub Page](https://superbasil3.github.io/build-failure-analyser-action/)
 
