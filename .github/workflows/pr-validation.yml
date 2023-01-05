@@ -1,3 +1,4 @@
+name: pr-validation
 on:
   workflow_dispatch:
   pull_request:
@@ -5,6 +6,7 @@ on:
 
 permissions:
   discussions: write
+  pull-requests: write
 
 jobs:
   lint:
