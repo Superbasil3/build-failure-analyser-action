@@ -18,8 +18,7 @@ jobs:
       - name: run_lint
         run: npm run lint
       - name: run_test
-        run:
-          npm run test
+        run: npm run test
       - name: make_release
         run: make release
         env:

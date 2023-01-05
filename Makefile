@@ -10,6 +10,7 @@ build:
 
 .PHONY: release
 release:
+	npm install ncc
 	npm install
 	git add .
 	git commit -m "Npm build for release"
