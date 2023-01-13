@@ -16,6 +16,24 @@ const getFileNameFromPath = function(pathLogFile) {
 };
 
 /**
+ * @param {string} description
+ * @param {String[]} regexMatch
+ * @return {string}
+ */
+const formatDescription = (description, regexMatch) => {
+  console.debug('formatDescription', description, regexMatch);
+  let newDescription = description;
+  // remove first three elements of the array (the first one is the whole match, the second one is the first group)
+  regexMatch.shift();
+
+  regexMatch.forEach((element, index) => {
+    newDescription = newDescription.replace(`{${index}}`, element);
+  });
+  console.debug('newDescription', newDescription);
+  return newDescription;
+};
+
+/**
  * @param {Octokit} octokit
  * @param {string} message
  * @param {string} owner
@@ -182,10 +200,11 @@ const parseRegexHash = function(regexesContent) {
 /**
  * @param {{id: string, name: string, description: string, regex: RegExp}} regexElement
  * @param {string} indication
+ * @param {string} formattedDescription
  * @return {string}
  */
-const formatMessageTab = function(regexElement, indication) {
-  return `| ${regexElement.id} | ${regexElement.name} | \`${indication}\` | ${regexElement.description} |`;
+const formatMessageTab = function(regexElement, indication, formattedDescription) {
+  return `| ${regexElement.id} | ${regexElement.name} | \`${indication}\` | ${formattedDescription} |`;
 };
 
 /**
@@ -222,7 +241,8 @@ const readFile = function(pathLogFile, regexHash, messageHeader, githubContext, 
     const regexesMatchingComment = [];
     for (const [indication, regexElement] of regexHash) {
       if (regexElement.regex.test(line)) {
-        regexesMatchingComment.push(formatMessageTab(regexElement, indication));
+        const formattedDescription = formatDescription(regexElement.description, regexElement.regex.exec(line));
+        regexesMatchingComment.push(formatMessageTab(regexElement, indication, formattedDescription));
       }
     }
     if (regexesMatchingComment.length > 0) {
