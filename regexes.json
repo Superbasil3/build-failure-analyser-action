@@ -3,13 +3,11 @@
     "ID_1": {
       "name": "NAME_1",
       "description": [
-        "DESCRIPTION_1_LINE_1",
-        "DESCRIPTION_1_LINE_2"
+        "DESCRIPTION_1_LINE_1 matching log level '{0}'",
+        "DESCRIPTION_1_LINE_2 matching header name '{1}'"
       ],
       "indications": [
-        "PATTERN_1_a",
-        "PATTERN_1_b",
-        "\\[error\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed Host header"
+        "\\[(.*)\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed (.*) header"
       ],
       "test_lines_to_match": [
         "PATTERN_1_a",

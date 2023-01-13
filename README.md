@@ -1,6 +1,7 @@
 # Build-failure-analyse Action
 
-This action is analysing a log file againt a json list of regexes to match potential recurrent build failures.
+This action is analysing a log file against a json list of regexes to match potential recurrent build failures.
+* This is highly inspired by the [Build Failure Analyzer Plugin](https://wiki.jenkins.io/display/JENKINS/Build+Failure+Analyzer) for Jenkins.
 
 ## Inputs
 

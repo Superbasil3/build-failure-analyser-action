@@ -56,7 +56,7 @@ jobs:
           echo "[Sat Jun 24 09:06:22 2006] [notice] Digest: done"  >> ${{ steps.generate_path_logs.outputs.path_logs }}
       - name: run_build_failure_analyser_action_local_file
         id: run_with_local_file
-        uses: Superbasil3/build-failure-analyser-action@ISSUE-2
+        uses: Superbasil3/build-failure-analyser-action@ISSUE-16
         with:
           path-log-file: ${{ steps.generate_path_logs.outputs.path_logs }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
