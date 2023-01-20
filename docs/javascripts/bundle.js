@@ -1,5 +1,5 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const {formatGlobalCommentTab, formatMessageTab, parseRegexHash, validateRegex} = require('../../helpers');
+const {formatGlobalCommentTab, formatMessageTab, parseRegexHash, validateRegex, formatDescription} = require('../../src/helpers');
 const showdown = require('showdown');
 
 // Create function to validate the regexes file format
@@ -55,7 +55,8 @@ runRegex = function(regexHash, textarea) {
       const regexesMatchingComment = [];
       for (const [indication, regexElement] of regexHash) {
         if (regexElement.regex.test(line)) {
-          regexesMatchingComment.push(formatMessageTab(regexElement, indication));
+          const formattedDescription = formatDescription(regexElement.description, regexElement.regex.exec(line));
+          regexesMatchingComment.push(formatMessageTab(regexElement, indication, formattedDescription));
         }
       }
       if (regexesMatchingComment.length > 0) {
@@ -85,253 +86,7 @@ convertMarkdownToHtml = function(markdown) {
   return converter.makeHtml(markdown.replaceAll('---\n','\n<hr>\n'));
 };
 
-},{"../../helpers":2,"showdown":4}],2:[function(require,module,exports){
-const lineReader = require('line-reader');
-
-const unshuffled = ['👎', '🙄', '👀', '🦹', '🥉', '🌡️', '🤔', '⏰', '🌵', '😮‍💨', '🧄', '❌', '⚡'];
-
-const shuffled = unshuffled
-    .map((value) => ({value, sort: Math.random()}))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({value}) => value);
-
-/**
- * @param {string} pathLogFile
- * @return {string}
- */
-const getFileNameFromPath = function(pathLogFile) {
-  return pathLogFile.split('\\').pop().split('/').pop();
-};
-
-/**
- * @param {Octokit} octokit
- * @param {string} message
- * @param {string} owner
- * @param {string} repo
- * @param {number} prNumber
- * @return {Promise<void>}
- */
-const updatePRComment = async function(octokit, message, owner, repo, prNumber) {
-  const prActionAnalyserId = `<!-- id_build_failure_analyser_action_${prNumber} -->`;
-
-  // Get old PR comments
-  const prComments = await octokit.issues.listComments({
-    owner: owner,
-    repo: repo,
-    issue_number: prNumber,
-  });
-
-  // Check if on of the PR comment contains the variable prActionAnalyserId
-  const prComment = prComments.data.find((comment) => comment.body.includes(prActionAnalyserId));
-
-  // If the PR comment already exists, delete it
-  if (prComment) {
-    await octokit.issues.deleteComment({
-      owner: owner,
-      repo: repo,
-      comment_id: prComment.id,
-    });
-  }
-  // Create the comment (so it appears at the end of the discussion)
-  await octokit.issues.createComment({
-    owner: owner,
-    repo: repo,
-    issue_number: prNumber,
-    body: prActionAnalyserId + message,
-  });
-};
-
-/**
- * @param {Octokit}  octokit
- * @param {string} owner
- * @param {string} repo
- * @param {number} prNumber
- * @return {Promise<void>}
- */
-const deletePreviousComment = async function(octokit, owner, repo, prNumber) {
-  // Get old PR comments
-  const prComment = await octokit.issues.listComments({
-    owner: owner,
-    repo: repo,
-    issue_number: prNumber,
-  });
-
-  // Check if on of the PR comment container the variable prActionAnalyserId
-  const prCommentId = prComment.data.find((comment) => comment.body.includes(`<!-- id_build_failure_analyser_action_${prNumber} -->`));
-
-  // If the PR comment already exists, update it
-  if (prCommentId) {
-    const result = await octokit.issues.deleteComment({
-      owner: owner,
-      repo: repo,
-      comment_id: prCommentId.id,
-    });
-    console.log('Comment deleted', result);
-  } else {
-    console.log('No comment to delete');
-  }
-};
-
-const processLogs = function(regexesFileLocation, pathLogFile, messageHeader, githubContext, pullRequestNumber, octokit) {
-  const regexHash = getRegexHash(regexesFileLocation);
-  readFile(pathLogFile, regexHash, messageHeader, githubContext, pullRequestNumber, octokit);
-};
-
-/**
- * @param {string} regexesFileLocation
- * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
- */
-const getRegexHash = function(regexesFileLocation) {
-  return parseRegexHash(getJsonContent(regexesFileLocation));
-};
-
-/**
- * @param {String} pathRegexFile
- * @return {string}
- */
-const getJsonContent = function(pathRegexFile) {
-  return require(pathRegexFile);
-};
-
-/**
- * @param {String} regexesContent
- * @return {String[]}
- */
-const validateRegex = function(regexesContent) {
-  const regexes = JSON.parse(regexesContent);
-  const message = [];
-  if (!regexes.hasOwnProperty('causes')) {
-    message.push('Json must contain a "causes" property.');
-  } else {
-    const causesEntries = Object.entries(regexes.causes);
-    for (const [id, cause] of causesEntries) {
-      if (!cause.hasOwnProperty('name')) {
-        message.push(`Cause ${id} must contain a "name" property.`);
-      }
-      if (!cause.hasOwnProperty('description')) {
-        message.push(`Cause ${id} must contain a "description" property.`);
-      }
-      if (!cause.hasOwnProperty('indications')) {
-        message.push(`Cause ${id} must contain an "indications" property.`);
-      } else {
-        if (!Array.isArray(cause.indications)) {
-          message.push(`Cause ${id} must contain an "indications" property of type Array.`);
-        }
-      }
-      if (cause.hasOwnProperty('test_lines_to_match')) {
-        if (!Array.isArray(cause.test_lines_to_match)) {
-          message.push(`Cause causes.${id}.test_lines_to_match must be a property of type Array.`);
-        } else {
-          for (const testLine of cause.test_lines_to_match) {
-            // We want that one test line match is matched by a least one indication
-            let checkLineMatched = false;
-            for (const indication of cause.indications) {
-              if (new RegExp(indication).test(testLine)) {
-                checkLineMatched = true;
-                break;
-              }
-            }
-            if (!checkLineMatched) {
-              message.push(`Cause causes.${id}.test_lines_to_match must be matched by at least one indication.`);
-              break;
-            }
-          }
-        }
-      }
-    }
-  }
-  return message;
-};
-
-/**
- * @param {string} regexesContent
- * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
- */
-const parseRegexHash = function(regexesContent) {
-  const regexHash = {};
-  const causesEntries = Object.entries(regexesContent.causes);
-  const nbrCauses = causesEntries.length;
-  let nbrIndications = 0;
-  for (const [id, cause] of causesEntries) {
-    for (const indication of cause.indications) {
-      regexHash[indication] = {
-        id: id,
-        name: cause.name,
-        description: String(cause.description).split(',').join('</br>'),
-        regex: new RegExp(indication),
-      };
-      nbrIndications++;
-    }
-  }
-  console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s) from the file`);
-  return Object.entries(regexHash);
-};
-
-/**
- * @param {{id: string, name: string, description: string, regex: RegExp}} regexElement
- * @param {string} indication
- * @return {string}
- */
-const formatMessageTab = function(regexElement, indication) {
-  return `| ${regexElement.id} | ${regexElement.name} | \`${indication}\` | ${regexElement.description} |`;
-};
-
-/**
- * @param {string} line
- * @param {string[]} regexesMatchingComment
- * @param {number} lineMatched
- * @return {string}
- */
-const formatGlobalCommentTab = function(line, regexesMatchingComment, lineMatched) {
-  return `### <ins>Match n°${lineMatched}<ins> ${shuffled[lineMatched % shuffled.length]}
-\`\`\`
-${line}
-\`\`\`
-| ID | Name | Regex | Description |
-| --- | --- | --- | --- |
-${regexesMatchingComment.join('\n')}
----
-`;
-};
-
-/**
- * @param {string} pathLogFile
- * @param {Map<string, {name: string, description: string, regex: RegExp}>} regexHash
- * @param {string} messageHeader
- * @param {Context} githubContext
- * @param {number} pullRequestNumber
- * @param {Octokit} octokit
- */
-const readFile = function(pathLogFile, regexHash, messageHeader, githubContext, pullRequestNumber, octokit) {
-  let message = '';
-  let lineMatched = 0;
-  console.info(`Going to read the file : ${pathLogFile}`);
-  lineReader.eachLine(pathLogFile, function(line, last) {
-    const regexesMatchingComment = [];
-    for (const [indication, regexElement] of regexHash) {
-      if (regexElement.regex.test(line)) {
-        regexesMatchingComment.push(formatMessageTab(regexElement, indication));
-      }
-    }
-    if (regexesMatchingComment.length > 0) {
-      // create the message to be sent to the PR
-      message += formatGlobalCommentTab(line, regexesMatchingComment, ++lineMatched);
-    }
-    if (last) {
-      if (message !== '') {
-        console.debug(`Will create/update comment for the log_file : ${pathLogFile}`);
-        updatePRComment(octokit, messageHeader + message, githubContext.repo.owner, githubContext.repo.repo, pullRequestNumber);
-      } else {
-        console.debug(`Will remove comment/do nothing : ${pathLogFile}`);
-        deletePreviousComment(octokit, githubContext.repo.owner, githubContext.repo.repo, pullRequestNumber);
-      }
-    }
-  });
-};
-
-module.exports = {deletePreviousComment, formatGlobalCommentTab, formatMessageTab, getFileNameFromPath, parseRegexHash, processLogs, updatePRComment, validateRegex};
-
-},{"line-reader":3}],3:[function(require,module,exports){
+},{"../../src/helpers":5,"showdown":3}],2:[function(require,module,exports){
 (function (setImmediate){(function (){
 'use strict';
 
@@ -641,7 +396,7 @@ module.exports.open = open;
 module.exports.eachLine = eachLine;
 
 }).call(this)}).call(this,require("timers").setImmediate)
-},{"fs":5,"string_decoder":11,"timers":12}],4:[function(require,module,exports){
+},{"fs":6,"string_decoder":12,"timers":13}],3:[function(require,module,exports){
 ;/*! showdown v 2.1.0 - 21-04-2022 */
 (function(){
 /**
@@ -5800,9 +5555,471 @@ if (typeof define === 'function' && define.amd) {
 
 
 
+},{}],4:[function(require,module,exports){
+module.exports={
+  "noCausesMessage": "No problems were identified. If you know why this problem occurred, please add a suitable Cause for it.",
+  "causes": {
+    "ID_1": {
+      "name": "NAME_1",
+      "description": [
+        "DESCRIPTION_1_LINE_1 matching log level '{0}'",
+        "DESCRIPTION_1_LINE_2 matching header name '{1}'"
+      ],
+      "indications": [
+        "\\[(.*)\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed (.*) header"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ]
+    },
+    "ID_2": {
+      "name": "NAME_2",
+      "description": [
+        "DESCRIPTION_2"
+      ],
+      "indications": [
+        "PATTERN_2_a",
+        "PATTERN_2_a"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ]
+    }
+  }
+}
 },{}],5:[function(require,module,exports){
+(function (process){(function (){
+const lineReader = require('line-reader');
+const {execSync} = require('child_process');
+const fs = require('fs');
 
-},{}],6:[function(require,module,exports){
+const unshuffled = ['👎', '🙄', '👀', '🦹', '🥉', '🌡️', '🤔', '⏰', '🌵', '😮‍💨', '🧄', '❌', '⚡'];
+const messageHeader = `:bangbang: [build-failure-analyser-action] :bangbang: : \n\n`;
+const messageFooter = '';
+const noCauseMessage = `No problems were identified. If you know why this problem occurred, please add a suitable Cause for it.`;
+
+const shuffled = unshuffled
+    .map((value) => ({value, sort: Math.random()}))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({value}) => value);
+
+/**
+ * @param {string} pathLogFile
+ * @return {string}
+ */
+const getFileNameFromPath = function(pathLogFile) {
+  return pathLogFile.split('\\').pop().split('/').pop();
+};
+
+/**
+ * @param {string} description
+ * @param {String[]} regexMatch
+ * @return {string}
+ */
+const formatDescription = (description, regexMatch) => {
+  console.debug('formatDescription', description, regexMatch);
+  let newDescription = description;
+  // remove first three elements of the array (the first one is the whole match, the second one is the first group)
+  regexMatch.shift();
+
+  regexMatch.forEach((element, index) => {
+    newDescription = newDescription.replace(`{${index}}`, element);
+  });
+  console.debug('newDescription', newDescription);
+  return newDescription;
+};
+
+
+/**
+ * @param {{id: string, name: string, description: string, regex: RegExp}} regexElement
+ * @param {string} indication
+ * @param {string} formattedDescription
+ * @return {string}
+ */
+const formatMessageTab = function(regexElement, indication, formattedDescription) {
+  return `| ${regexElement.id} | ${regexElement.name} | \`${indication}\` | ${formattedDescription} |`;
+};
+
+/**
+ * @param {string} line
+ * @param {string[]} regexesMatchingComment
+ * @param {number} lineMatched
+ * @return {string}
+ */
+const formatGlobalCommentTab = function(line, regexesMatchingComment, lineMatched) {
+  return `### <ins>Match n°${lineMatched}<ins> ${shuffled[lineMatched % shuffled.length]}
+\`\`\`
+${line}
+\`\`\`
+| ID | Name | Regex | Description |
+| --- | --- | --- | --- |
+${regexesMatchingComment.join('\n')}
+---
+`;
+};
+
+/**
+ * @param {string} globalComment
+ * @param {string} pathLogFile
+ * @param {int} pullRequestNumber
+ * @param {Octokit} octokit
+ * @param {Map} githubContext
+ */
+const formatGlobalComment = function(globalComment, pathLogFile, pullRequestNumber, octokit, githubContext) {
+  if (globalComment !== '') {
+    console.debug(`Will create/update comment for the log_file : ${pathLogFile}`);
+    updatePRComment(octokit, messageHeader + globalComment + messageFooter, githubContext.repo.owner, githubContext.repo.repo, pullRequestNumber);
+  } else {
+    console.debug(`Will remove comment/do nothing : ${pathLogFile}`);
+    deletePreviousComment(octokit, githubContext.repo.owner, githubContext.repo.repo, pullRequestNumber);
+  }
+};
+
+/**
+ * @param {Octokit} octokit
+ * @param {string} message
+ * @param {string} owner
+ * @param {string} repo
+ * @param {number} prNumber
+ * @return {Promise<void>}
+ */
+const updatePRComment = async function(octokit, message, owner, repo, prNumber) {
+  const prActionAnalyserId = `<!-- id_build_failure_analyser_action_${prNumber} -->`;
+
+  // Get old PR comments
+  const prComments = await octokit.issues.listComments({
+    owner: owner,
+    repo: repo,
+    issue_number: prNumber,
+  });
+
+  // Check if on of the PR comment contains the variable prActionAnalyserId
+  const prComment = prComments.data.find((comment) => comment.body.includes(prActionAnalyserId));
+
+  // If the PR comment already exists, delete it
+  if (prComment) {
+    await octokit.issues.deleteComment({
+      owner: owner,
+      repo: repo,
+      comment_id: prComment.id,
+    });
+  }
+  // Create the comment (so it appears at the end of the discussion)
+  await octokit.issues.createComment({
+    owner: owner,
+    repo: repo,
+    issue_number: prNumber,
+    body: prActionAnalyserId + message,
+  });
+};
+
+/**
+ * @param {Octokit}  octokit
+ * @param {string} owner
+ * @param {string} repo
+ * @param {number} prNumber
+ * @return {Promise<void>}
+ */
+const deletePreviousComment = async function(octokit, owner, repo, prNumber) {
+  // Get old PR comments
+  const prComment = await octokit.issues.listComments({
+    owner: owner,
+    repo: repo,
+    issue_number: prNumber,
+  });
+
+  // Check if on of the PR comment container the variable prActionAnalyserId
+  const prCommentId = prComment.data.find((comment) => comment.body.includes(`<!-- id_build_failure_analyser_action_${prNumber} -->`));
+
+  // If the PR comment already exists, update it
+  if (prCommentId) {
+    const result = await octokit.issues.deleteComment({
+      owner: owner,
+      repo: repo,
+      comment_id: prCommentId.id,
+    });
+    console.log('Comment deleted', result);
+  } else {
+    console.log('No comment to delete');
+  }
+};
+
+/**
+ * @param {string} regexesFileLocation
+ * @param {string} pathLogFile
+ * @param {Map} githubContext
+ * @param {int} pullRequestNumber
+ * @param {Octokit} octokit
+ */
+const processLogs = async function(regexesFileLocation, pathLogFile, githubContext, pullRequestNumber, octokit) {
+  const listJobsLogsFilename = await getListJobsLogsFilename(pathLogFile, octokit, githubContext);
+
+  const regexHash = getRegexHash(regexesFileLocation);
+  let fileComment = '';
+  for (const fileName of listJobsLogsFilename) {
+    fileComment += await analyseFile(fileName, regexHash);
+  }
+  if (fileComment === '' && listJobsLogsFilename.length > 0) {
+    fileComment = getNoCausesMessage(regexesFileLocation);
+  }
+  formatGlobalComment(fileComment, pathLogFile, pullRequestNumber, octokit, githubContext);
+};
+
+/**
+ * @param {string} pathLogFile
+ * @param {Octokit} octokit
+ * @param {Map} githubContext
+ * @return {string[]}
+ */
+const getListJobsLogsFilename = async function(pathLogFile, octokit, githubContext) {
+  let listJobsLogsFilename = [];
+  console.info('pathLogFile', pathLogFile);
+  if (pathLogFile === undefined || pathLogFile === '') {
+    console.debug('path undefined, will retrieve completed in failure jobs logs');
+    listJobsLogsFilename = await downloadJobsLogs(octokit, githubContext);
+  } else {
+    let absolutePath = pathLogFile;
+    if (!pathLogFile.startsWith('/')) {
+      absolutePath = `${process.cwd()}/${pathLogFile}`;
+    }
+    if (fs.lstatSync(absolutePath).isFile()) {
+      console.debug('path is a file, will analyse this file');
+      listJobsLogsFilename.push(absolutePath);
+    } else if (fs.lstatSync(absolutePath).isDirectory()) {
+      console.debug('path is a directory, will analyse all files in this directory and subdirectories');
+      listJobsLogsFilename = retrieveLogsFilenames(absolutePath);
+    }
+  }
+  return listJobsLogsFilename;
+};
+
+/**
+ * @param {string} path
+ * @return {string[]}
+ */
+const retrieveLogsFilenames = function(path) {
+  const listFilenameJobsLogs = [];
+  // Get the filename of the path folder and subdirectories
+  const files = fs.readdirSync(path, {withFileTypes: true});
+  for (const file of files) {
+    if (file.isDirectory()) {
+      listFilenameJobsLogs.push(...retrieveLogsFilenames(`${path}/${file.name}`));
+    } else if (file.isFile()) {
+      listFilenameJobsLogs.push(`${path}/${file.name}`);
+    }
+  }
+  return listFilenameJobsLogs;
+};
+
+/**
+ * @param {Octokit} octokit
+ * @param {Map} githubContext
+ * @return {Promise<String[]>}
+ */
+const downloadJobsLogs = async function(octokit, githubContext) {
+  const listFilenameJobsLogs = [];
+  await octokit.actions.listJobsForWorkflowRun({
+    owner: githubContext.repo.owner,
+    repo: githubContext.repo.repo,
+    run_id: githubContext.runId,
+  }).then(async (result) => {
+    const jobs = result.data.jobs;
+    for (const job of jobs) {
+      if (job.status === 'completed' && job.conclusion === 'failure') {
+        console.log(job.name, ' is completed and failed, will download and analyse');
+        await octokit.actions.downloadJobLogsForWorkflowRun({
+          owner: githubContext.repo.owner,
+          repo: githubContext.repo.repo,
+          job_id: job.id,
+          run_id: githubContext.runId,
+        }).then((result) => {
+          const fileName = `${process.cwd()}/${job.name}.log`;
+          downloadFromUrl(result.url, fileName);
+          listFilenameJobsLogs.push(fileName);
+        });
+      }
+    }
+  });
+  console.log('listFilenameJobsLogs', listFilenameJobsLogs);
+  return listFilenameJobsLogs;
+};
+
+/**
+ * @param {string} regexesFileLocation
+ * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
+ */
+const getRegexHash = function(regexesFileLocation) {
+  return parseRegexHash(getJsonContent(regexesFileLocation));
+};
+
+/**
+ * @param {string} regexesFileLocation
+ * @return {string}
+ */
+const getNoCausesMessage = function(regexesFileLocation) {
+  try {
+    const jsonContent = getJsonContent(regexesFileLocation);
+    return jsonContent.noCausesMessage;
+  } catch (e) {
+    console.error(`Error while getting noCausesMessage from ${regexesFileLocation}`, e);
+    return noCauseMessage;
+  }
+};
+
+/**
+ * @param {String} pathRegexFile
+ * @return {string}
+ */
+const getJsonContent = function(pathRegexFile) {
+  downloadFromUrl(pathRegexFile, '../regexes.json');
+  return require('../regexes.json');
+};
+
+/**
+ * @param {String} regexesContent
+ * @return {String[]}
+ */
+const validateRegex = function(regexesContent) {
+  const regexes = JSON.parse(regexesContent);
+  const message = [];
+  if (!regexes.hasOwnProperty('causes')) {
+    message.push('Json must contain a "causes" property.');
+  } else {
+    const causesEntries = Object.entries(regexes.causes);
+    for (const [id, cause] of causesEntries) {
+      if (!cause.hasOwnProperty('name')) {
+        message.push(`Cause ${id} must contain a "name" property.`);
+      }
+      if (!cause.hasOwnProperty('description')) {
+        message.push(`Cause ${id} must contain a "description" property.`);
+      }
+      if (!cause.hasOwnProperty('indications')) {
+        message.push(`Cause ${id} must contain an "indications" property.`);
+      } else {
+        if (!Array.isArray(cause.indications)) {
+          message.push(`Cause ${id} must contain an "indications" property of type Array.`);
+        }
+      }
+      if (cause.hasOwnProperty('test_lines_to_match')) {
+        if (!Array.isArray(cause.test_lines_to_match)) {
+          message.push(`Cause causes.${id}.test_lines_to_match must be a property of type Array.`);
+        } else {
+          for (const testLine of cause.test_lines_to_match) {
+            // We want that one test line match is matched by a least one indication
+            let checkLineMatched = false;
+            for (const indication of cause.indications) {
+              if (new RegExp(indication).test(testLine)) {
+                checkLineMatched = true;
+                break;
+              }
+            }
+            if (!checkLineMatched) {
+              message.push(`Cause causes.${id}.test_lines_to_match must be matched by at least one indication.`);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+  return message;
+};
+
+/**
+ * @param {string} regexesContent
+ * @return {Map<string, {id: string, name: string, description: string, regex: RegExp}>}
+ */
+const parseRegexHash = function(regexesContent) {
+  const regexHash = {};
+  const causesEntries = Object.entries(regexesContent.causes);
+  const nbrCauses = causesEntries.length;
+  let nbrIndications = 0;
+  for (const [id, cause] of causesEntries) {
+    for (const indication of cause.indications) {
+      regexHash[indication] = {
+        id: id,
+        name: cause.name,
+        description: String(cause.description).split(',').join('</br>'),
+        regex: new RegExp(indication),
+      };
+      nbrIndications++;
+    }
+  }
+  console.log(`Loaded ${nbrCauses} cause(s), including ${nbrIndications} indication(s) from the file`);
+  return Object.entries(regexHash);
+};
+
+
+/**
+ * @param {string} command
+ */
+const executeCommand = (command) => {
+  console.debug('Will execute command : ', command);
+  // get current working directory
+  execSync(command, {stdio: 'inherit'}, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      return;
+    }
+    console.log(`stdout: ${stdout}`);
+  });
+};
+
+/**
+ * @param {string} url
+ * @param {string} fileName
+ */
+const downloadFromUrl = (url, fileName) => {
+  executeCommand(`curl -L "${url}" > ${fileName}`);
+};
+
+/**
+ * @param {string} pathLogFile
+ * @param {Map<string, {name: string, description: string, regex: RegExp}>} regexHash
+ * @return string
+ */
+const analyseFile = async function(pathLogFile, regexHash) {
+  let message = '';
+  let lineMatched = 0;
+  executeCommand(`cat ${pathLogFile}`);
+  console.info(`Going to read the file : ${pathLogFile}`);
+  const eachLinePromise = new Promise((resolve) => {
+    lineReader.eachLine(pathLogFile, function(line) {
+      const regexesMatchingComment = [];
+      for (const [indication, regexElement] of regexHash) {
+        if (regexElement.regex.test(line)) {
+          const formattedDescription = formatDescription(regexElement.description, regexElement.regex.exec(line));
+          regexesMatchingComment.push(formatMessageTab(regexElement, indication, formattedDescription));
+        }
+      }
+      if (regexesMatchingComment.length > 0) {
+        // create the message to be sent to the PR
+        message += formatGlobalCommentTab(line, regexesMatchingComment, ++lineMatched);
+      }
+    }, function() {
+      resolve();
+    });
+  });
+  await eachLinePromise;
+  if (lineMatched !== 0) {
+    const filename = getFileNameFromPath(pathLogFile);
+    return `## Analyse of ${filename} 📄 \n` + message;
+  }
+  return message;
+};
+
+module.exports = {deletePreviousComment, formatGlobalCommentTab, formatDescription, formatMessageTab, getFileNameFromPath, parseRegexHash, processLogs, updatePRComment, validateRegex};
+
+}).call(this)}).call(this,require('_process'))
+},{"../regexes.json":4,"_process":10,"child_process":6,"fs":6,"line-reader":2}],6:[function(require,module,exports){
+
+},{}],7:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -5954,7 +6171,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -7735,7 +7952,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":6,"buffer":7,"ieee754":8}],8:[function(require,module,exports){
+},{"base64-js":7,"buffer":8,"ieee754":9}],9:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -7822,7 +8039,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -8008,7 +8225,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -8075,7 +8292,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":7}],11:[function(require,module,exports){
+},{"buffer":8}],12:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8372,7 +8589,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":10}],12:[function(require,module,exports){
+},{"safe-buffer":11}],13:[function(require,module,exports){
 (function (setImmediate,clearImmediate){(function (){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -8451,4 +8668,4 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this)}).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":9,"timers":12}]},{},[1]);
+},{"process/browser.js":10,"timers":13}]},{},[1]);

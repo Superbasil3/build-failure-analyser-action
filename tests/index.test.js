@@ -1,4 +1,4 @@
-const {updatePRComment} = require('./helpers');
+const {updatePRComment} = require('../src/helpers');
 
 test('test_call_update_pr_ok', () => {
   const octokit = {

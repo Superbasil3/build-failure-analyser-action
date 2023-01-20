@@ -1,0 +1,36 @@
+{
+  "noCausesMessage": "No problems were identified. If you know why this problem occurred, please add a suitable Cause for it [Here](https://github.com/Superbasil3/build-failure-analyser-action/blob/main/regexes.json)",
+  "causes": {
+    "ID_1": {
+      "name": "Supposed to match file_server.log logs",
+      "description": [
+        "DESCRIPTION_1_LINE_1 matching log level '{0}'",
+        "DESCRIPTION_1_LINE_2 matching header name '{1}'"
+      ],
+      "indications": [
+        "\\[(.*?)\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed (.*) header"
+      ],
+      "test_line_match": ""
+    },
+    "ID_2": {
+      "name": "Supposed to match : file_http.log",
+      "description": [
+        "User from IP '{0}' got a 500 when calling '{1}' from the url '{2}'"
+      ],
+      "indications": [
+        "(.*) AWAY \\- \\[01\\/Feb\\/1998\\:01\\:08\\:53 \\-0800\\] \\\"GET (.*) HTTP\\/1\\.0\\\" 500 9332 \\\"(.*)\\\" \\\"Mozilla\\/4\\.01 \\(Macintosh\\; I\\; PPC\\)\\\""
+      ],
+      "test_line_match": ""
+    },
+    "ID_3": {
+      "name": "Supposed to match : file_syslog.log",
+      "description": [
+        "An error occured on the logs"
+      ],
+      "indications": [
+        ".*Error.*"
+      ],
+      "test_line_match": ""
+    }
+  }
+}
