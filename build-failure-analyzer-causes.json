@@ -1,4 +1,5 @@
 {
+  "noCausesMessage": "No problems were identified. If you know why this problem occurred, please add a suitable Cause for it [Here](https://github.com/Superbasil3/build-failure-analyser-action/blob/main/regexes.json)",
   "causes": {
     "ID_1": {
       "name": "NAME_1",
@@ -21,7 +22,7 @@
       ],
       "indications": [
         "PATTERN_2_a",
-        "PATTERN_2_a"
+        "PATTERN_2_b"
       ],
       "test_lines_to_match": [
         "PATTERN_2_a",

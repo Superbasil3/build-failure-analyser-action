@@ -50,5 +50,5 @@ with:
 ---
 
 ## Config testing
-You can check the json of rules and/or validate against a lot file on the [build-failure-analyser-action GitHub Page](https://superbasil3.github.io/build-failure-analyser-action/)
+You can check the json of rules and/or validate against a log file on the [build-failure-analyser-action GitHub Page](https://superbasil3.github.io/build-failure-analyser-action/)
 

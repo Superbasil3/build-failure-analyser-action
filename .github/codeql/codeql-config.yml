@@ -1,7 +1,7 @@
 name: "CodeQL config"
 queries:
   - name: Run custom queries
-    uses: ./queries
+    uses: ./.github/queries
   # Run all extra query suites, both because we want to
   # and because it'll act as extra testing. This is why
   # we include both even though one is a superset of the

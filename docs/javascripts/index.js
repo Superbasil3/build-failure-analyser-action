@@ -1,4 +1,4 @@
-const {formatGlobalCommentTab, formatMessageTab, parseRegexHash, validateRegex} = require('../../helpers');
+const {formatGlobalCommentTab, formatMessageTab, parseRegexHash, validateRegex, formatDescription} = require('../../src/helpers');
 const showdown = require('showdown');
 
 // Create function to validate the regexes file format
@@ -54,7 +54,8 @@ runRegex = function(regexHash, textarea) {
       const regexesMatchingComment = [];
       for (const [indication, regexElement] of regexHash) {
         if (regexElement.regex.test(line)) {
-          regexesMatchingComment.push(formatMessageTab(regexElement, indication));
+          const formattedDescription = formatDescription(regexElement.description, regexElement.regex.exec(line));
+          regexesMatchingComment.push(formatMessageTab(regexElement, indication, formattedDescription));
         }
       }
       if (regexesMatchingComment.length > 0) {
