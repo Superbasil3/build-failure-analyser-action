@@ -43,15 +43,25 @@
       <div class="mdl-layout-spacer"></div>
       <!-- Navigation. We hide it in small screens. -->
       <nav class="mdl-navigation mdl-layout--large-screen-only">
-        <a class="mdl-navigation__link" href="">Link if needed</a>
+        <a class="mdl-navigation__link" href="https://regex101.com/">regex101</a>
       </nav>
     </div>
   </header>
   <body>
-    <div class="wrapper" style="width: 80%;">
+    <div class="wrapper" >
         <div class="container text-center" style="text-align: center">
           <h1>Validating regexes json files</h1>
           <p>This is made to validate config for using GitHub Action : build-failure-analyser-action</p>
+          <ul class="mdl-list">
+            <li class="mdl-list__item mdl-list__item--three-line">
+              <span class="mdl-list__item-primary-content">
+                <i class="material-icons">info</i>
+                <span class="mdl-list__item-text-body">
+                  TEST
+                </span>
+              </span>
+            </li>
+          </ul>
           <div style="width: 100%;">
             <textarea id="input_json_string" name="input_json_string" rows="15" style="width: 90%;" autofocus="true" placeholder="Put your JSON regex file here">{
   "causes": {
@@ -105,7 +115,7 @@ Not Matching Line PATTERN_1_b</textarea>
           </div>
         </div>
       </div>
-    <footer class="mdl-mini-footer">
+    <footer class="mdl-mini-footer" style="position: absolute;bottom: 0;width: 100%;">
       <div class="mdl-mini-footer__left-section">
         <div class="mdl-logo">build-failure-analyser-action</div>
         <ul class="mdl-mini-footer__link-list">
