@@ -1,0 +1,27 @@
+name: pr-validation
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+permissions:
+  discussions: write
+  pull-requests: write
+
+jobs:
+  lint_and_unit_test:
+    runs-on: ubuntu-latest
+    name: lint_and_unit_test
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+      - name: set_node.js_16.x
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 16.x
+      - name: install_ncc_modules
+        run: npm install ncc
+      - name: run_lint
+        run: npm run lint
+      - name: run_test
+        run: npm run test

@@ -1,0 +1,33 @@
+{
+  "noCausesMessage": "No problems were identified. If you know why this problem occurred, please add a suitable Cause for it [Here](https://github.com/Superbasil3/build-failure-analyser-action/blob/main/regexes.json)",
+  "causes": {
+    "ID_1": {
+      "name": "NAME_1",
+      "description": [
+        "DESCRIPTION_1_LINE_1 matching log level '{0}'",
+        "DESCRIPTION_1_LINE_2 matching header name '{1}'"
+      ],
+      "indications": [
+        "\\[(.*)\\] \\[client \\d+\\.\\d+\\.\\d+\\.\\d+\\] Client sent malformed (.*) header"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_1_a",
+        "PATTERN_1_b"
+      ]
+    },
+    "ID_2": {
+      "name": "NAME_2",
+      "description": [
+        "DESCRIPTION_2"
+      ],
+      "indications": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ],
+      "test_lines_to_match": [
+        "PATTERN_2_a",
+        "PATTERN_2_b"
+      ]
+    }
+  }
+}

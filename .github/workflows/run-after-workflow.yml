@@ -1,0 +1,29 @@
+name: retrieve-and-analyse-logs
+on:
+  workflow_run:
+    workflows: ["pr-validation"]
+    types:
+      - completed
+
+permissions:
+  discussions: write
+  pull-requests: write
+
+jobs:
+  retrive_workflow_logs:
+    runs-on: ubuntu-latest
+    name: retrieve_logs
+    steps:
+      - name: retrieve_workflow_logs_action
+        id: retrieve_workflow_logs_action
+        uses: Superbasil3/retrieve-workflow-logs-action@v0.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keep-only-error-files: true
+      - name: run_build_failure_analyser_action
+        id: run_build_failure_analyser_action
+        uses: Superbasil3/build-failure-analyser-action@main
+        with:
+          path-log-file: ${{ steps.retrieve_workflow_logs_action.outputs.path-logs }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/tests/build-failure-analyzer-causes.json

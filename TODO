@@ -1,0 +1,10 @@
+- Write action to validate json entry
+- link to regex101
+- relase v0
+- add sponsor
+- use https://material-components.github.io/material-components-web-catalog/#/component/text-field for github page
+
+
+Do clean release :
+https://github.com/actions/upload-artifact/blob/main/.github/workflows/release-new-action-version.yml
+https://docs.github.com/en/actions/creating-actions/releasing-and-maintaining-actions

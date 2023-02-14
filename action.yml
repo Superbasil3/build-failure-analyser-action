@@ -1,0 +1,18 @@
+name: 'Build Failure Analyser Action'
+description: 'Play regex against log file in order to see if error are matched'
+branding:
+  icon: 'search'
+  color: 'blue'
+inputs:
+  path-log-file:
+    description: "Where the log file is located, or a folder containing logs"
+    required: true
+  github-token:
+    description: "Token with access to update message, and read the database"
+    required: true
+  regexes-file-location:
+    description: "Url or local file path to the json file containing the regexes"
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'
