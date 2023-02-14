@@ -1,6 +1,6 @@
 {
   "name": "build-failure-analyser-action",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "This action prints \"Hello World\" or \"Hello\" + the name of a person to greet to the log.",
   "main": "src/index.js",
   "scripts": {
