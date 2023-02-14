@@ -33,10 +33,10 @@ jobs:
       - name: analyse_logs
         id: analyse_logs_from_previous_steps
         if: always()
-        uses: Superbasil3/build-failure-analyser-action@ISSUE-16
+        uses: Superbasil3/build-failure-analyser-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/ISSUE-16/tests/build-failure-analyzer-causes.json
+          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/tests/build-failure-analyzer-causes.json
   analyse_logs_from_folder:
     runs-on: ubuntu-latest
     if: ${{ always() }}
@@ -45,10 +45,10 @@ jobs:
       - name: analyse_logs_folder
         id: analyse_logs_from_folder
         if: always()
-        uses: Superbasil3/build-failure-analyser-action@ISSUE-16
+        uses: Superbasil3/build-failure-analyser-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/ISSUE-16/tests/build-failure-analyzer-causes.json
+          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/tests/build-failure-analyzer-causes.json
           path-log-file: ./tests/ressources/folder_with_logs/
   analyse_logs_from_file:
     runs-on: ubuntu-latest
@@ -58,8 +58,8 @@ jobs:
       - name: analyse_logs_from_file
         id: analyse_logs_folder
         if: always()
-        uses: Superbasil3/build-failure-analyser-action@ISSUE-16
+        uses: Superbasil3/build-failure-analyser-action@main
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/ISSUE-16/tests/build-failure-analyzer-causes.json
+          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/tests/build-failure-analyzer-causes.json
           path-log-file: ./tests/ressources/file_server.log

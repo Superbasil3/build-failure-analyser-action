@@ -52,16 +52,24 @@
         <div class="container text-center" style="text-align: center">
           <h1>Validating regexes json files</h1>
           <p>This is made to validate config for using GitHub Action : build-failure-analyser-action</p>
-          <ul class="mdl-list">
-            <li class="mdl-list__item mdl-list__item--three-line">
-              <span class="mdl-list__item-primary-content">
-                <i class="material-icons mdl-list__item-avatar">info</i>
-                <span class="mdl-list__item-text-body">
-                  To create the block to match, a hack to escape is to search with regex
-                </span>
-              </span>
-            </li>
-          </ul>
+          <div class="snippet-header" style="display: flex;justify-content: center;">
+            <div class="">
+              <div class="">
+                <div>
+                  <ul class=" mdl-list">
+                    <li class="mdl-list__item mdl-list__item--three-line">
+                      <span class="mdl-list__item-primary-content">
+                        <i class="material-icons mdl-list__item-avatar">info</i>
+                        <span class="mdl-list__item-text-body">
+                          Hack to have escaped string : take a string, past it in yout IDE, and seach the string with Regex activated. you will have an escaped version of the message !
+                        </span>
+                    </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
           <div style="width: 100%;">
             <textarea id="input_json_string" name="input_json_string" rows="15" style="width: 90%;" autofocus="true" placeholder="Put your JSON regex file here">{
   "causes": {
