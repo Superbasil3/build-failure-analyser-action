@@ -22,8 +22,8 @@ jobs:
           keep-only-error-files: true
       - name: run_build_failure_analyser_action
         id: run_build_failure_analyser_action
-        uses: Superbasil3/build-failure-analyser-action@ISSUE-16
+        uses: Superbasil3/build-failure-analyser-action@main
         with:
           path-log-file: ${{ steps.retrieve_workflow_logs_action.outputs.path-logs }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/ISSUE-16/tests/build-failure-analyzer-causes.json
+          regexes-file-location: https://raw.githubusercontent.com/Superbasil3/build-failure-analyser-action/main/tests/build-failure-analyzer-causes.json
