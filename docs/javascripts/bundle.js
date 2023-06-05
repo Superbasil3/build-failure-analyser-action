@@ -5832,7 +5832,10 @@ const downloadJobsLogs = async function(octokit, githubContext) {
           job_id: job.id,
           run_id: githubContext.runId,
         }).then((result) => {
-          const fileName = `${process.cwd()}/${job.name}.log`;
+          const jobNameUnformatted = job.name;
+          // Replace special characters < > " / \ | ? * ( ) $ [ ] (space)
+          const jobNameFormatted = jobNameUnformatted.replace(/[<>\/\\|?*()$\[\] ]/g, '_');
+          const fileName = `${process.cwd()}/${jobNameFormatted}.log`;
           downloadFromUrl(result.url, fileName);
           listFilenameJobsLogs.push(fileName);
         });
