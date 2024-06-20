@@ -12,3 +12,14 @@ build: ## Build the project
 .PHONY: release
 release: ## Run install
 	npm install
+
+.PHONY: tag
+tag: ## Tag the current version
+	npm version patch -m "[RELEASE] Version %s"
+
+# Action that will run the build, release and tag
+.PHONY: release-all
+release-all: tag build release ## Run the build, release and tag, then add and push the tag
+	git add .
+	git commit -m "[RELEASE][skip ci] Version $(shell cat package.json | jq -r '.version')" || true
+	git push --tags
